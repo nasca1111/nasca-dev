@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nasca — Security Engineer Case File</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #171717;
+        --paper-alt: #141414;
+        --ink: #2bee34;
+        --ink-soft: #2bee34;
+        --ink-faint: #2bee34;
+        --line: #141414;
+        --clearance: #2bee34;
+        --alert: #ff0000;
+        --white: #141414;
+        --mono: "JetBrains Mono", monospace;
+        --sans: "IBM Plex Sans KR", sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        background-image:
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 64px 64px;
+        background-position: -1px -1px;
+        background-attachment: fixed;
+        background-color: var(--paper);
+        background-blend-mode: normal;
+        position: relative;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 64px 64px;
+        opacity: 0.35;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .wrap {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 28px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* ---------- header ---------- */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: #3f3f3f;
+        backdrop-filter: blur(6px);
+        border-bottom: 1px solid var(--line);
+      }
+      .nav-inner {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 16px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .case-id {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        color: var(--ink-soft);
+      }
+      .case-id b {
+        color: var(--ink);
+      }
+      nav ul {
+        list-style: none;
+        display: flex;
+        gap: 28px;
+      }
+      nav a {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-decoration: none;
+        color: var(--ink-soft);
+        text-transform: uppercase;
+        padding-bottom: 3px;
+        border-bottom: 1px solid transparent;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+      nav a:hover,
+      nav a:focus-visible {
+        color: var(--clearance);
+        border-color: var(--clearance);
+      }
+
+      /* ---------- hero ---------- */
+      .stamp {
+        position: absolute;
+        top: 22px;
+        right: 28px;
+        border: 1.5px solid var(--clearance);
+        color: var(--clearance);
+        font-family: var(--mono);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        padding: 5px 10px;
+        border-radius: 3px;
+        transform: rotate(4deg);
+        background: rgba(14, 110, 90, 0.05);
+      }
+      .hero {
+        padding: 96px 0 72px;
+        position: relative;
+      }
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.14em;
+        color: var(--alert);
+        text-transform: uppercase;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: var(--alert);
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr;
+        gap: 56px;
+        align-items: start;
+      }
+      h1 {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: clamp(38px, 5.2vw, 60px);
+        letter-spacing: -0.01em;
+        line-height: 1.08;
+        margin-bottom: 10px;
+      }
+      .role {
+        font-size: 19px;
+        color: var(--ink-soft);
+        font-weight: 500;
+        margin-bottom: 22px;
+      }
+      .summary {
+        font-size: 15.5px;
+        color: var(--ink-soft);
+        max-width: 52ch;
+        margin-bottom: 32px;
+      }
+      .cta-row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        font-family: var(--mono);
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        padding: 12px 20px;
+        border-radius: 3px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .btn-primary {
+        background: var(--ink);
+        color: var(--white);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 0 var(--line);
+      }
+      .btn-ghost {
+        border: 1px solid var(--ink);
+        color: var(--ink);
+      }
+      .btn-ghost:hover {
+        background: var(--ink);
+        color: var(--white);
+      }
+
+      .file-card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 22px 24px;
+        box-shadow:
+          6px 6px 0 var(--paper-alt),
+          6px 6px 0 1px var(--line);
+      }
+      .file-card-title {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        border-bottom: 1px dashed var(--line);
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+      }
+      .meta-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--paper);
+        font-size: 13.5px;
+      }
+      .meta-row:last-child {
+        border-bottom: none;
+      }
+      .meta-key {
+        color: var(--ink-faint);
+        font-family: var(--mono);
+        font-size: 12px;
+      }
+      .meta-val {
+        font-weight: 600;
+        text-align: right;
+      }
+      .stat-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        margin-top: 16px;
+      }
+      .stat {
+        text-align: center;
+        padding: 10px 4px;
+        background: var(--paper);
+        border-radius: 3px;
+      }
+      .stat-num {
+        font-family: var(--mono);
+        font-weight: 700;
+        font-size: 20px;
+        color: var(--clearance);
+      }
+      .stat-label {
+        font-size: 10.5px;
+        color: var(--ink-faint);
+        letter-spacing: 0.03em;
+        margin-top: 2px;
+      }
+
+      /* ---------- section shell ---------- */
+      section {
+        padding: 64px 0;
+        border-top: 1px solid var(--line);
+      }
+      .sec-head {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        margin-bottom: 36px;
+      }
+      .sec-num {
+        font-family: var(--mono);
+        color: var(--ink-faint);
+        font-size: 13px;
+      }
+      .sec-title {
+        font-family: var(--mono);
+        font-size: 14px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-weight: 700;
+      }
+      .sec-title::after {
+        content: "";
+        display: block;
+        height: 1px;
+        background: var(--line);
+        margin-top: 12px;
+        width: 100%;
+      }
+      .reveal {
+        opacity: 0;
+        transform: translateY(16px);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+      .reveal.in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ---------- about ---------- */
+      .about-body {
+        font-size: 16px;
+        color: var(--ink-soft);
+        max-width: 68ch;
+      }
+      .about-body strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      /* ---------- capabilities ---------- */
+      .cap-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .cap-card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 20px;
+        transition:
+          border-color 0.15s,
+          transform 0.15s;
+      }
+      .cap-card:hover {
+        border-color: var(--clearance);
+        transform: translateY(-3px);
+      }
+      .cap-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .cap-title {
+        font-weight: 600;
+        font-size: 15px;
+      }
+      .cap-idx {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-faint);
+      }
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .tag {
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 3px 8px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        color: var(--ink-soft);
+      }
+
+      /* ---------- findings (projects) ---------- */
+      .finding {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+      .finding-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 22px;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .finding-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .finding-id {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--ink-faint);
+      }
+      .finding-title {
+        font-weight: 700;
+        font-size: 17px;
+      }
+      .sev {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        padding: 4px 9px;
+        border-radius: 3px;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+      .sev-high {
+        background: rgba(181, 69, 11, 0.12);
+        color: var(--alert);
+      }
+      .sev-med {
+        background: rgba(14, 110, 90, 0.12);
+        color: var(--clearance);
+      }
+
+      .finding-body {
+        padding: 0 22px 20px;
+      }
+      .redact-wrap {
+        position: relative;
+        border-radius: 3px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      .redact-text {
+        padding: 14px;
+        font-size: 14px;
+        color: var(--ink-soft);
+      }
+      .redact-bar {
+        position: absolute;
+        inset: 0;
+        background: var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+        transform-origin: left;
+      }
+      .redact-bar span {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--paper);
+        letter-spacing: 0.15em;
+      }
+      .redact-wrap:hover .redact-bar,
+      .redact-wrap:focus-within .redact-bar {
+        transform: scaleX(0);
+      }
+      .finding-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 14px;
+      }
+
+      /* ---------- appendix (education/certs) ---------- */
+      .appendix-list {
+        border-top: 1px dashed var(--line);
+      }
+      .appendix-item {
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        gap: 18px;
+        padding: 16px 4px;
+        border-bottom: 1px dashed var(--line);
+        align-items: center;
+      }
+      .appendix-date {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        color: var(--ink-faint);
+      }
+      .appendix-name {
+        font-weight: 500;
+        font-size: 14.5px;
+      }
+      .appendix-org {
+        font-size: 12.5px;
+        color: var(--ink-faint);
+      }
+      .appendix-tag {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--clearance);
+        text-align: right;
+      }
+
+      /* ---------- contact ---------- */
+      .contact-box {
+        background: var(--ink);
+        color: var(--paper);
+        border-radius: 6px;
+        padding: 44px 40px;
+        text-align: left;
+      }
+      .contact-eyebrow {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: #000000;
+        letter-spacing: 0.1em;
+        margin-bottom: 10px;
+      }
+      .contact-box h2 {
+        font-family: var(--mono);
+        font-size: 26px;
+        margin-bottom: 16px;
+        line-height: 1.3;
+      }
+      .contact-box p {
+        color: #2bee34;
+        max-width: 52ch;
+        margin-bottom: 26px;
+        font-size: 14.5px;
+      }
+      .term-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .term-line {
+        font-family: var(--mono);
+        font-size: 14px;
+      }
+      .term-line a {
+        color: var(--white);
+        text-decoration: none;
+        border-bottom: 1px solid #2bee34;
+      }
+      .term-line a:hover {
+        border-color: #1900ff;
+        color: #000000;
+      }
+      .term-prompt {
+        color: #2bee34;
+        margin-right: 8px;
+      }
+
+      footer {
+        text-align: center;
+        padding: 32px 0 48px;
+      }
+      footer p {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--ink-faint);
+        letter-spacing: 0.1em;
+      }
+
+      @media (max-width: 840px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+        .cap-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        nav ul {
+          gap: 16px;
+        }
+        .appendix-item {
+          grid-template-columns: 1fr;
+          gap: 4px;
+        }
+        .appendix-tag {
+          text-align: left;
+        }
+      }
+      @media (max-width: 560px) {
+        .cap-grid {
+          grid-template-columns: 1fr;
+        }
+        nav ul {
+          display: none;
+        }
+        .stamp {
+          display: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+          animation: none !important;
+        }
+        .reveal {
+          opacity: 1;
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="nav-inner">
+        <div class="case-id">CASE FILE // <b>Nasca</b> // 정보보안</div>
+        <nav>
+          <ul>
+            <li><a href="#about">프로필</a></li>
+            <li><a href="#scope">역량</a></li>
+            <li><a href="#findings">프로젝트</a></li>
+            <li><a href="#appendix">자격/교육</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <section class="hero" style="border-top: none">
+        <div class="stamp">CLEARANCE: PUBLIC</div>
+        <div class="eyebrow">Active — 침해사고 대응 및 취약점 진단</div>
+        <div class="hero-grid">
+          <div>
+            <h1>Nasca</h1>
+            <div class="role">Security Engineer / Penetration Tester</div>
+            <p class="summary">
+              웹·인프라 취약점 진단부터 침해사고 대응까지, 공격자의 시각으로
+              시스템을 검증하고 방어자의 언어로 결과를 전달합니다. 발견은
+              증거로, 제안은 실행 가능한 수준으로 남깁니다.
+            </p>
+            <div class="cta-row">
+              <a class="btn btn-primary" href="#contact">문의하기 →</a>
+              <a class="btn btn-ghost" href="#findings">프로젝트 보기</a>
+            </div>
+          </div>
+          <div class="file-card">
+            <div class="file-card-title">Subject Metadata</div>
+            <div class="meta-row">
+              <span class="meta-key">LOCATION</span
+              ><span class="meta-val">Seoul, KR</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">FOCUS</span
+              ><span class="meta-val">Web / Cloud / IR</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-key">STATUS</span
+              ><span class="meta-val">이직 가능</span>
+            </div>
+            <div class="stat-row">
+              <div class="stat">
+                <div class="stat-num">4년</div>
+                <div class="stat-label">실무 경력</div>
+              </div>
+              <div class="stat">
+                <div class="stat-num">37건</div>
+                <div class="stat-label">취약점 리포트</div>
+              </div>
+              <div class="stat">
+                <div class="stat-num">3개</div>
+                <div class="stat-label">보유 자격증</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about">
+        <div class="sec-head">
+          <span class="sec-num">§1</span
+          ><span class="sec-title">Executive Summary</span>
+        </div>
+        <p class="about-body reveal">
+          <strong>4년차 보안 엔지니어</strong>로 금융·이커머스 도메인에서 웹
+          애플리케이션 진단, 클라우드 환경(AWS) 보안 점검, 침해사고 대응 업무를
+          수행했습니다. OWASP Top 10 기반 진단뿐 아니라
+          <strong>비즈니스 로직 취약점</strong> 발굴에 강점이 있으며, 발견한
+          이슈를 개발팀이 바로 이해하고 조치할 수 있도록 재현 절차와 근본 원인을
+          함께 정리하는 것을 원칙으로 합니다. 최근에는 사내 보안 자동화
+          파이프라인 구축과 위협 인텔리전스 기반 탐지 룰 고도화에 집중하고
+          있습니다.
+        </p>
+      </section>
+
+      <section id="scope">
+        <div class="sec-head">
+          <span class="sec-num">§2</span
+          ><span class="sec-title">Scope of Capability</span>
+        </div>
+        <div class="cap-grid">
+          <div class="cap-card reveal">
+            <div class="cap-card-head">
+              <span class="cap-title">웹 애플리케이션 진단</span
+              ><span class="cap-idx">01</span>
+            </div>
+            <div class="tag-row">
+              <span class="tag">Burp Suite</span><span class="tag">OWASP</span
+              ><span class="tag">비즈니스 로직</span>
+            </div>
+          </div>
+          <div class="cap-card reveal">
+            <div class="cap-card-head">
+              <span class="cap-title">모의해킹</span
+              ><span class="cap-idx">02</span>
+            </div>
+            <div class="tag-row">
+              <span class="tag">내부망 침투</span
+              ><span class="tag">Red Team</span
+              ><span class="tag">Cobalt Strike</span>
+            </div>
+          </div>
+          <div class="cap-card reveal">
+            <div class="cap-card-head">
+              <span class="cap-title">클라우드 보안</span
+              ><span class="cap-idx">03</span>
+            </div>
+            <div class="tag-row">
+              <span class="tag">AWS</span><span class="tag">IAM 점검</span
+              ><span class="tag">CSPM</span>
+            </div>
+          </div>
+          <div class="cap-card reveal">
+            <div class="cap-card-head">
+              <span class="cap-title">침해사고 대응</span
+              ><span class="cap-idx">04</span>
+            </div>
+            <div class="tag-row">
+              <span class="tag">로그 분석</span><span class="tag">포렌식</span
+              ><span class="tag">Timeline 재구성</span>
+            </div>
+          </div>
+          <div class="cap-card reveal">
+            <div class="cap-card-head">
+              <span class="cap-title">보안 자동화</span
+              ><span class="cap-idx">05</span>
+            </div>
+            <div class="tag-row">
+              <span class="tag">Python</span><span class="tag">CI/CD SAST</span
+              ><span class="tag">Slack Bot</span>
+            </div>
+          </div>
+          <div class="cap-card reveal">
+            <div class="cap-card-head">
+              <span class="cap-title">탐지 엔지니어링</span
+              ><span class="cap-idx">06</span>
+            </div>
+            <div class="tag-row">
+              <span class="tag">Sigma Rule</span
+              ><span class="tag">MITRE ATT&CK</span
+              ><span class="tag">SIEM</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="findings">
+        <div class="sec-head">
+          <span class="sec-num">§3</span
+          ><span class="sec-title">Findings — 프로젝트</span>
+        </div>
+
+        <div class="finding reveal">
+          <div class="finding-head">
+            <div class="finding-left">
+              <span class="finding-id">FND-2025-014</span>
+              <span class="finding-title">이커머스 결제 모듈 취약점 진단</span>
+            </div>
+            <span class="sev sev-high">Impact: High</span>
+          </div>
+          <div class="finding-body">
+            <div class="redact-wrap" tabindex="0">
+              <div class="redact-bar"><span>HOVER TO DECLASSIFY</span></div>
+              <div class="redact-text">
+                결제 완료 콜백 검증 로직에서 서버측 금액 재검증이 누락되어
+                클라이언트 조작으로 결제 금액을 변조할 수 있는 취약점을 발견.
+                PoC와 함께 개발팀에 공유하고 서버 사이드 검증 로직 개선을 제안,
+                배포 전 재검증까지 담당했습니다.
+              </div>
+            </div>
+            <div class="finding-stack">
+              <span class="tag">Burp Suite</span><span class="tag">Python</span
+              ><span class="tag">Postman</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="finding reveal">
+          <div class="finding-head">
+            <div class="finding-left">
+              <span class="finding-id">FND-2024-009</span>
+              <span class="finding-title">사내 SOC 이상탐지 룰셋 고도화</span>
+            </div>
+            <span class="sev sev-med">Impact: Medium</span>
+          </div>
+          <div class="finding-body">
+            <div class="redact-wrap" tabindex="0">
+              <div class="redact-bar"><span>HOVER TO DECLASSIFY</span></div>
+              <div class="redact-text">
+                기존 시그니처 기반 탐지의 오탐률이 높아 MITRE ATT&CK 매트릭스
+                기준으로 시나리오를 재정의하고 Sigma 룰 40여 종을 신규 작성.
+                오탐률을 낮추고 실제 침해 시나리오 재현 테스트로 탐지율을
+                검증했습니다.
+              </div>
+            </div>
+            <div class="finding-stack">
+              <span class="tag">Sigma</span><span class="tag">Splunk</span
+              ><span class="tag">ATT&CK Navigator</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="finding reveal">
+          <div class="finding-head">
+            <div class="finding-left">
+              <span class="finding-id">FND-2024-003</span>
+              <span class="finding-title"
+                >AWS 인프라 보안 진단 자동화 도구</span
+              >
+            </div>
+            <span class="sev sev-med">Impact: Medium</span>
+          </div>
+          <div class="finding-body">
+            <div class="redact-wrap" tabindex="0">
+              <div class="redact-bar"><span>HOVER TO DECLASSIFY</span></div>
+              <div class="redact-text">
+                수동으로 진행하던 IAM 권한 과다 부여, 퍼블릭 S3 버킷 점검 등을
+                매일 자동 점검하는 파이썬 도구를 직접 개발. 결과를 Slack으로
+                알림 발송하도록 구성해 점검 소요 시간을 대폭 단축했습니다.
+              </div>
+            </div>
+            <div class="finding-stack">
+              <span class="tag">Python</span><span class="tag">boto3</span
+              ><span class="tag">Slack API</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="appendix">
+        <div class="sec-head">
+          <span class="sec-num">§4</span
+          ><span class="sec-title">Certification and Education</span>
+        </div>
+        <div class="appendix-list reveal">
+          <div class="appendix-item">
+            <span class="appendix-date">2025.11</span>
+            <div>
+              <div class="appendix-name">IT パスポート</div>
+              <div class="appendix-org">IPA</div>
+            </div>
+            <span class="appendix-tag">CERTIFIED</span>
+          </div>
+          <div class="appendix-item">
+            <span class="appendix-date">2026.05</span>
+            <div>
+              <div class="appendix-name">基本情報技術者</div>
+              <div class="appendix-org">IPA</div>
+            </div>
+            <span class="appendix-tag">CERTIFIED</span>
+          </div>
+          <div class="appendix-item">
+            <span class="appendix-date">2025.04</span>
+            <div>
+              <div class="appendix-name">情報理工学部 在学</div>
+              <div class="appendix-org">立命館大学</div>
+            </div>
+            <span class="appendix-tag">EDUCATION</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" style="border-top: none">
+        <div class="contact-box reveal">
+          <div class="contact-eyebrow">§5 — CONTACT</div>
+          <div class="term-list">
+            <div class="term-line">
+              <span class="term-prompt">$</span>contact --email
+              <a href="mailto:contact@example.com">contact@example.com</a>
+            </div>
+            <div class="term-line">
+              <span class="term-prompt">$</span>contact --github
+              <a href="https://github.com" target="_blank" rel="noopener"
+                >github.com/yourhandle</a
+              >
+            </div>
+            <div class="term-line">
+              <span class="term-prompt">$</span>contact --linkedin
+              <a href="https://linkedin.com" target="_blank" rel="noopener"
+                >linkedin.com/in/yourhandle</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <p>// END OF REPORT — © 2026 Nasca. ALL RIGHTS RESERVED.</p>
+    </footer>
+
+    <script>
+      const els = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              io.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.12 },
+      );
+      els.forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>
