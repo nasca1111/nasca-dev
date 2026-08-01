@@ -21,3 +21,4 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           source: "index.html"
           target: "/usr/share/nginx/html"
+          overwrite: true
