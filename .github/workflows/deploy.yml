@@ -13,6 +13,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Remove old index.html
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            rm -f /usr/share/nginx/html/index.html
+
       - name: Deploy to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -21,4 +30,3 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           source: "index.html"
           target: "/usr/share/nginx/html"
-          overwrite: true
