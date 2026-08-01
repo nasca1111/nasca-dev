@@ -12,15 +12,15 @@
     />
     <style>
       :root {
-        --paper: #171717;
-        --paper-alt: #141414;
-        --ink: #2bee34;
-        --ink-soft: #2bee34;
-        --ink-faint: #2bee34;
-        --line: #141414;
-        --clearance: #2bee34;
+        --paper: #1a1a1a;
+        --paper-alt: #1a1a1a;
+        --ink: #f5efe0;
+        --ink-soft: #f5efe0;
+        --ink-faint: #f5efe0;
+        --line: #1a1a1a;
+        --clearance: #f5efe0;
         --alert: #ff0000;
-        --white: #141414;
+        --black: #1a1a1a;
         --mono: "JetBrains Mono", monospace;
         --sans: "IBM Plex Sans KR", sans-serif;
       }
@@ -208,7 +208,7 @@
       }
       .btn-primary {
         background: var(--ink);
-        color: var(--white);
+        color: var(--black);
       }
       .btn-primary:hover {
         transform: translateY(-2px);
@@ -220,11 +220,11 @@
       }
       .btn-ghost:hover {
         background: var(--ink);
-        color: var(--white);
+        color: var(--black);
       }
 
       .file-card {
-        background: var(--white);
+        background: var(--black);
         border: 1px solid var(--line);
         border-radius: 4px;
         padding: 22px 24px;
@@ -347,7 +347,7 @@
         gap: 16px;
       }
       .cap-card {
-        background: var(--white);
+        background: var(--black);
         border: 1px solid var(--line);
         border-radius: 4px;
         padding: 20px;
@@ -391,7 +391,7 @@
 
       /* ---------- findings (projects) ---------- */
       .finding {
-        background: var(--white);
+        background: var(--black);
         border: 1px solid var(--line);
         border-radius: 4px;
         margin-bottom: 16px;
@@ -427,7 +427,7 @@
         padding: 4px 9px;
         border-radius: 3px;
         text-transform: uppercase;
-        white-space: nowrap;
+        black-space: nowrap;
       }
       .sev-high {
         background: rgba(181, 69, 11, 0.12);
@@ -548,7 +548,7 @@
         font-size: 14px;
       }
       .term-line a {
-        color: var(--white);
+        color: var(--black);
         text-decoration: none;
         border-bottom: 1px solid #2bee34;
       }
@@ -616,13 +616,13 @@
   <body>
     <header>
       <div class="nav-inner">
-        <div class="case-id">CASE FILE // <b>Nasca</b> // 정보보안</div>
+        <div class="case-id">Personal development site</div>
         <nav>
           <ul>
-            <li><a href="#about">프로필</a></li>
-            <li><a href="#scope">역량</a></li>
-            <li><a href="#findings">프로젝트</a></li>
-            <li><a href="#appendix">자격/교육</a></li>
+            <li><a href="#about">Profile</a></li>
+            <li><a href="#scope">Capabilities</a></li>
+            <li><a href="#findings">Project</a></li>
+            <li><a href="#appendix">Certifications/Education</a></li>
           </ul>
         </nav>
       </div>
@@ -631,47 +631,58 @@
     <div class="wrap">
       <section class="hero" style="border-top: none">
         <div class="stamp">CLEARANCE: PUBLIC</div>
-        <div class="eyebrow">Active — 침해사고 대응 및 취약점 진단</div>
+        <div class="eyebrow">Active</div>
         <div class="hero-grid">
           <div>
             <h1>Nasca</h1>
-            <div class="role">Security Engineer / Penetration Tester</div>
-            <p class="summary">
-              웹·인프라 취약점 진단부터 침해사고 대응까지, 공격자의 시각으로
-              시스템을 검증하고 방어자의 언어로 결과를 전달합니다. 발견은
-              증거로, 제안은 실행 가능한 수준으로 남깁니다.
-            </p>
+            <div class="role">
+              Undergraduate student in computer engineering
+            </div>
             <div class="cta-row">
-              <a class="btn btn-primary" href="#contact">문의하기 →</a>
-              <a class="btn btn-ghost" href="#findings">프로젝트 보기</a>
+              <a class="btn btn-primary" href="#contact">Contact →</a>
+              <a class="btn btn-ghost" href="#findings">My Project</a>
             </div>
           </div>
           <div class="file-card">
-            <div class="file-card-title">Subject Metadata</div>
+            <div class="file-card-title">Profile</div>
+            <div class="meta-row">
+              <span class="meta-key">NAME</span
+              ><span class="meta-val">PARK JIWON</span>
+            </div>
             <div class="meta-row">
               <span class="meta-key">LOCATION</span
-              ><span class="meta-val">Seoul, KR</span>
+              ><span class="meta-val">Osaka, JP</span>
             </div>
             <div class="meta-row">
-              <span class="meta-key">FOCUS</span
-              ><span class="meta-val">Web / Cloud / IR</span>
+              <span class="meta-key">AFFILIATION</span
+              ><span class="meta-val">立命館大学</span>
             </div>
             <div class="meta-row">
-              <span class="meta-key">STATUS</span
-              ><span class="meta-val">이직 가능</span>
+              <span class="meta-key">Goal</span
+              ><span class="meta-val"
+                ><p>Cybersecurity/Pentest</p>
+                <p>Red/Blue Team</p></span>
+            </div>
+
+            <div class="role">
+              Certifications
             </div>
             <div class="stat-row">
               <div class="stat">
-                <div class="stat-num">4년</div>
-                <div class="stat-label">실무 경력</div>
+                <div class="stat-num">JLPT N2</div>
+                <div class="stat-label">2021.11</div>
               </div>
               <div class="stat">
-                <div class="stat-num">37건</div>
-                <div class="stat-label">취약점 리포트</div>
+                <div class="stat-num">JLPT N1</div>
+                <div class="stat-label">2022.06</div>
               </div>
               <div class="stat">
-                <div class="stat-num">3개</div>
-                <div class="stat-label">보유 자격증</div>
+                <div class="stat-num">IT パスポート</div>
+                <div class="stat-label">2025.11</div>
+              </div>
+              <div class="stat">
+                <div class="stat-num">基本情報技術者</div>
+                <div class="stat-label">2026.05</div>
               </div>
             </div>
           </div>
@@ -680,18 +691,12 @@
 
       <section id="about">
         <div class="sec-head">
-          <span class="sec-num">§1</span
-          ><span class="sec-title">Executive Summary</span>
+          <span class="sec-num">§1</span><span class="sec-title">Purpose</span>
         </div>
         <p class="about-body reveal">
-          <strong>4년차 보안 엔지니어</strong>로 금융·이커머스 도메인에서 웹
-          애플리케이션 진단, 클라우드 환경(AWS) 보안 점검, 침해사고 대응 업무를
-          수행했습니다. OWASP Top 10 기반 진단뿐 아니라
-          <strong>비즈니스 로직 취약점</strong> 발굴에 강점이 있으며, 발견한
-          이슈를 개발팀이 바로 이해하고 조치할 수 있도록 재현 절차와 근본 원인을
-          함께 정리하는 것을 원칙으로 합니다. 최근에는 사내 보안 자동화
-          파이프라인 구축과 위협 인텔리전스 기반 탐지 룰 고도화에 집중하고
-          있습니다.
+          This site is a personal website created for a
+          <strong>portfolio</strong>. I plan to update it by listing my personal
+          projects and abilities.
         </p>
       </section>
 
@@ -703,64 +708,8 @@
         <div class="cap-grid">
           <div class="cap-card reveal">
             <div class="cap-card-head">
-              <span class="cap-title">웹 애플리케이션 진단</span
+              <span class="cap-title">scope context space</span
               ><span class="cap-idx">01</span>
-            </div>
-            <div class="tag-row">
-              <span class="tag">Burp Suite</span><span class="tag">OWASP</span
-              ><span class="tag">비즈니스 로직</span>
-            </div>
-          </div>
-          <div class="cap-card reveal">
-            <div class="cap-card-head">
-              <span class="cap-title">모의해킹</span
-              ><span class="cap-idx">02</span>
-            </div>
-            <div class="tag-row">
-              <span class="tag">내부망 침투</span
-              ><span class="tag">Red Team</span
-              ><span class="tag">Cobalt Strike</span>
-            </div>
-          </div>
-          <div class="cap-card reveal">
-            <div class="cap-card-head">
-              <span class="cap-title">클라우드 보안</span
-              ><span class="cap-idx">03</span>
-            </div>
-            <div class="tag-row">
-              <span class="tag">AWS</span><span class="tag">IAM 점검</span
-              ><span class="tag">CSPM</span>
-            </div>
-          </div>
-          <div class="cap-card reveal">
-            <div class="cap-card-head">
-              <span class="cap-title">침해사고 대응</span
-              ><span class="cap-idx">04</span>
-            </div>
-            <div class="tag-row">
-              <span class="tag">로그 분석</span><span class="tag">포렌식</span
-              ><span class="tag">Timeline 재구성</span>
-            </div>
-          </div>
-          <div class="cap-card reveal">
-            <div class="cap-card-head">
-              <span class="cap-title">보안 자동화</span
-              ><span class="cap-idx">05</span>
-            </div>
-            <div class="tag-row">
-              <span class="tag">Python</span><span class="tag">CI/CD SAST</span
-              ><span class="tag">Slack Bot</span>
-            </div>
-          </div>
-          <div class="cap-card reveal">
-            <div class="cap-card-head">
-              <span class="cap-title">탐지 엔지니어링</span
-              ><span class="cap-idx">06</span>
-            </div>
-            <div class="tag-row">
-              <span class="tag">Sigma Rule</span
-              ><span class="tag">MITRE ATT&CK</span
-              ><span class="tag">SIEM</span>
             </div>
           </div>
         </div>
@@ -769,81 +718,25 @@
       <section id="findings">
         <div class="sec-head">
           <span class="sec-num">§3</span
-          ><span class="sec-title">Findings — 프로젝트</span>
+          ><span class="sec-title">Findings — Project</span>
         </div>
 
         <div class="finding reveal">
           <div class="finding-head">
             <div class="finding-left">
               <span class="finding-id">FND-2025-014</span>
-              <span class="finding-title">이커머스 결제 모듈 취약점 진단</span>
+              <span class="finding-title">dev</span>
             </div>
             <span class="sev sev-high">Impact: High</span>
           </div>
           <div class="finding-body">
             <div class="redact-wrap" tabindex="0">
-              <div class="redact-bar"><span>HOVER TO DECLASSIFY</span></div>
-              <div class="redact-text">
-                결제 완료 콜백 검증 로직에서 서버측 금액 재검증이 누락되어
-                클라이언트 조작으로 결제 금액을 변조할 수 있는 취약점을 발견.
-                PoC와 함께 개발팀에 공유하고 서버 사이드 검증 로직 개선을 제안,
-                배포 전 재검증까지 담당했습니다.
-              </div>
+              <div class="redact-bar"><span>hover space</span></div>
+              <div class="redact-text">context</div>
             </div>
             <div class="finding-stack">
-              <span class="tag">Burp Suite</span><span class="tag">Python</span
-              ><span class="tag">Postman</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="finding reveal">
-          <div class="finding-head">
-            <div class="finding-left">
-              <span class="finding-id">FND-2024-009</span>
-              <span class="finding-title">사내 SOC 이상탐지 룰셋 고도화</span>
-            </div>
-            <span class="sev sev-med">Impact: Medium</span>
-          </div>
-          <div class="finding-body">
-            <div class="redact-wrap" tabindex="0">
-              <div class="redact-bar"><span>HOVER TO DECLASSIFY</span></div>
-              <div class="redact-text">
-                기존 시그니처 기반 탐지의 오탐률이 높아 MITRE ATT&CK 매트릭스
-                기준으로 시나리오를 재정의하고 Sigma 룰 40여 종을 신규 작성.
-                오탐률을 낮추고 실제 침해 시나리오 재현 테스트로 탐지율을
-                검증했습니다.
-              </div>
-            </div>
-            <div class="finding-stack">
-              <span class="tag">Sigma</span><span class="tag">Splunk</span
-              ><span class="tag">ATT&CK Navigator</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="finding reveal">
-          <div class="finding-head">
-            <div class="finding-left">
-              <span class="finding-id">FND-2024-003</span>
-              <span class="finding-title"
-                >AWS 인프라 보안 진단 자동화 도구</span
-              >
-            </div>
-            <span class="sev sev-med">Impact: Medium</span>
-          </div>
-          <div class="finding-body">
-            <div class="redact-wrap" tabindex="0">
-              <div class="redact-bar"><span>HOVER TO DECLASSIFY</span></div>
-              <div class="redact-text">
-                수동으로 진행하던 IAM 권한 과다 부여, 퍼블릭 S3 버킷 점검 등을
-                매일 자동 점검하는 파이썬 도구를 직접 개발. 결과를 Slack으로
-                알림 발송하도록 구성해 점검 소요 시간을 대폭 단축했습니다.
-              </div>
-            </div>
-            <div class="finding-stack">
-              <span class="tag">Python</span><span class="tag">boto3</span
-              ><span class="tag">Slack API</span>
+              <span class="tag">Tag1</span><span class="tag">Tag2</span
+              ><span class="tag">Tag3</span>
             </div>
           </div>
         </div>
@@ -858,28 +751,11 @@
           <div class="appendix-item">
             <span class="appendix-date">2025.11</span>
             <div>
-              <div class="appendix-name">IT パスポート</div>
-              <div class="appendix-org">IPA</div>
+              <div class="appendix-name">title</div>
+              <div class="appendix-org">context</div>
             </div>
-            <span class="appendix-tag">CERTIFIED</span>
+            <span class="appendix-tag">tag</span>
           </div>
-          <div class="appendix-item">
-            <span class="appendix-date">2026.05</span>
-            <div>
-              <div class="appendix-name">基本情報技術者</div>
-              <div class="appendix-org">IPA</div>
-            </div>
-            <span class="appendix-tag">CERTIFIED</span>
-          </div>
-          <div class="appendix-item">
-            <span class="appendix-date">2025.04</span>
-            <div>
-              <div class="appendix-name">情報理工学部 在学</div>
-              <div class="appendix-org">立命館大学</div>
-            </div>
-            <span class="appendix-tag">EDUCATION</span>
-          </div>
-        </div>
       </section>
 
       <section id="contact" style="border-top: none">
@@ -888,18 +764,12 @@
           <div class="term-list">
             <div class="term-line">
               <span class="term-prompt">$</span>contact --email
-              <a href="mailto:contact@example.com">contact@example.com</a>
+              <a href="mailto:contact@example.com">security</a>
             </div>
             <div class="term-line">
               <span class="term-prompt">$</span>contact --github
               <a href="https://github.com" target="_blank" rel="noopener"
-                >github.com/yourhandle</a
-              >
-            </div>
-            <div class="term-line">
-              <span class="term-prompt">$</span>contact --linkedin
-              <a href="https://linkedin.com" target="_blank" rel="noopener"
-                >linkedin.com/in/yourhandle</a
+                >https://github.com/nasca1111</a
               >
             </div>
           </div>
