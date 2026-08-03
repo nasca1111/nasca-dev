@@ -8,17 +8,35 @@ async function loadCommits() {
   const list = document.getElementById("commit-list");
 
   commits.forEach((commit) => {
+    const date = new Date(commit.commit.author.date);
+
+    const formattedDate =
+      date.getFullYear() +
+      "." +
+      String(date.getMonth() + 1).padStart(2, "0") +
+      "." +
+      String(date.getDate()).padStart(2, "0") +
+      " " +
+      String(date.getHours()).padStart(2, "0") +
+      ":" +
+      String(date.getMinutes()).padStart(2, "0") +
+      ":" +
+      String(date.getSeconds()).padStart(2, "0");
+
     const li = document.createElement("li");
 
     li.innerHTML = `
-            <a href="${commit.html_url}" target="_blank">
-                ${commit.commit.message}
-            </a>
-            <br>
-            <small>
-                ${new Date(commit.commit.author.date).toLocaleDateString()}
-            </small>
-        `;
+      <div class="meta-row-syslog">
+        <span class="status-dot"></span>
+        <span class="meta-key-syslog">
+                        ${formattedDate}
+        </span>
+        <a href="${commit.html_url}" target="_blank">
+          ${commit.commit.message}
+        </a>
+
+      </div>
+    `;
 
     list.appendChild(li);
   });
