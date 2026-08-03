@@ -13,6 +13,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Removing git
+        run: rm -rf .git
+
       - name: Deploy to EC2
         uses: appleboy/scp-action@v0.1.7
         with:

@@ -126,7 +126,7 @@ nav a:focus-visible {
   background: rgba(14, 110, 90, 0.05);
 }
 .hero {
-  padding: 96px 0 72px;
+  padding: 96px 0 2px;
   position: relative;
 }
 .eyebrow {
