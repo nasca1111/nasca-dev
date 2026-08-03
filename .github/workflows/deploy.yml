@@ -21,4 +21,8 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           source: "./"
           target: "/usr/share/nginx/html"
+          exclude: |
+            .git/**
+            .github/**
+
           overwrite: true
