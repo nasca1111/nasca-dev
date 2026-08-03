@@ -636,7 +636,7 @@ footer p {
   }
 }
 
-#syslog {
+----- syslog ----- #syslog {
   margin-top: 80px;
 }
 
@@ -648,6 +648,11 @@ footer p {
 #commit-list {
   list-style: none;
   display: grid;
+  gap: 10px;
+
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 10px;
 }
 
 #commit-list li {
@@ -666,6 +671,11 @@ footer p {
   transform: translateY(-3px);
 }
 
+#commit-list a:hover {
+  transform: translateY(-3px);
+  color: #2bee34;
+}
+
 #commit-list a {
   text-align: left;
   font-family: var(--mono);
@@ -681,6 +691,19 @@ footer p {
 
   padding-bottom: 0;
   margin-bottom: 0;
+}
+
+#commit-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#commit-list::-webkit-scrollbar-thumb {
+  background: var(--ink);
+  border-radius: 10px;
+}
+
+#commit-list::-webkit-scrollbar-track {
+  background: black;
 }
 
 .status-dot {

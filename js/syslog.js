@@ -1,6 +1,6 @@
 async function loadCommits() {
   const res = await fetch(
-    "https://api.github.com/repos/nasca1111/nasca-dev/commits?per_page=5",
+    "https://api.github.com/repos/nasca1111/nasca-dev/commits",
   );
 
   const commits = await res.json();
