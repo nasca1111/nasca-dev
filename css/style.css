@@ -139,6 +139,8 @@ nav a:focus-visible {
   display: flex;
   align-items: center;
   gap: 10px;
+  position: relative;
+  animation: textPulse 1.5s infinite;
 }
 
 .eyebrow::before {
@@ -148,6 +150,19 @@ nav a:focus-visible {
   background: var(--alert);
   border-radius: 50%;
   display: inline-block;
+  animation: pulse 1.5s infinite;
+}
+
+.eyebrow::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background: var(--alert);
+  border-radius: 50%;
+  position: absolute;
+  margin-left: -4px;
+  opacity: 0.4;
+  animation: ping 1.5s infinite;
 }
 
 .hero-grid {
@@ -670,38 +685,25 @@ footer p {
 
 .status-dot {
   display: inline-block;
-
   width: 8px;
   height: 8px;
-
   background: #2bee34;
-
   border-radius: 50%;
-
-  margin-right: 20px;
-
+  margin-right: 10px;
   position: relative;
-
   animation: pulse 1.5s infinite;
 }
 
 .status-dot::after {
   content: "";
-
   position: absolute;
-
   top: -4px;
   left: -4px;
-
   width: 16px;
   height: 16px;
-
   border-radius: 50%;
-
   background: #2bee34;
-
   opacity: 0.4;
-
   animation: ping 1.5s infinite;
 }
 
@@ -725,5 +727,16 @@ footer p {
   100% {
     transform: scale(1.8);
     opacity: 0;
+  }
+}
+
+@keyframes textPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
   }
 }

@@ -29,7 +29,7 @@ async function loadCommits() {
       <div class="meta-row-syslog">
         <span class="status-dot"></span>
         <span class="meta-key-syslog">
-                        ${formattedDate}
+                        ${formattedDate} |
         </span>
         <a href="${commit.html_url}" target="_blank">
           ${commit.commit.message}
