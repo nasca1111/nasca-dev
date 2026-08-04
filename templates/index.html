@@ -60,7 +60,9 @@
                   type="button"
                   data-post-id="{{ post.id }}"
                   data-post-title="{{ post.title }}"
-                  data-post-content="{{ post.content }}"                >
+                  data-post-content="{{ post.content }}"
+                  data-editable
+                >
                   <span class="post-item-id">LOG-{{ '%03d'|format(post.id) }}</span>
                   <span class="post-item-title">{{ post.title }}</span>
                   <span class="post-item-date">{{ post.created_at.strftime('%Y.%m.%d %H:%M') }}</span>
