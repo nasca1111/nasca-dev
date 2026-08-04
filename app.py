@@ -11,7 +11,12 @@ from extensions import db
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "change-this-secret-key-before-production")
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/ec2-user/portfolio/instance/app.db"
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    "sqlite:///" + os.path.join(BASE_DIR, "instance", "app.db")
+)
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
