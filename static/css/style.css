@@ -1165,13 +1165,8 @@ footer p {
   white-space: nowrap;
 }
 
-.post-item-edit:hover {
+.post-item:hover .post-item-edit {
   opacity: 1;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  color: #2bee34;
-  white-space: nowrap;
 }
 
 .post-empty {

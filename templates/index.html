@@ -55,7 +55,7 @@
               </div>
               <div class="post-list">
                 {% for post in posts %}
-                <button
+                <button 
                   class="post-item"
                   type="button"
                   data-post-id="{{ post.id }}"
@@ -66,7 +66,7 @@
                   <span class="post-item-id">LOG-{{ '%03d'|format(post.id) }}</span>
                   <span class="post-item-title">{{ post.title }}</span>
                   <span class="post-item-date">{{ post.created_at.strftime('%Y.%m.%d %H:%M') }}</span>
-                  {% if is_admin %}<span class="post-item-edit">EDIT →</span>{% endif %}
+                  {% if is_admin %}<span class="post-item-edit" >EDIT →</span>{% endif %}
                 </button>
                 {% else %}
                 <div class="post-empty">
