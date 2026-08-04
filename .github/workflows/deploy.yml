@@ -24,6 +24,9 @@ jobs:
           exclude: |
             .git/**
             .github/**
+            venv/**
+            __pycache__/**
+            instance/*.db
 
       - name: Restart Flask
         uses: appleboy/ssh-action@v1.0.3
