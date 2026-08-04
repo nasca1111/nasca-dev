@@ -72,9 +72,9 @@
                 <div class="post-empty">
                   <span>NO ENTRIES YET</span>
                   {% if is_admin %}
-                  <button class="post-empty-button" type="button" data-open-write>Create First Entry →</button>
+                  <button class="btn btn-ghost" type="button" data-open-write>Create First Entry →</button>
                   {% else %}
-                  <a class="post-empty-button" href="{{ url_for('login', next=request.path) }}">Sign in to create an entry →</a>
+                  <a class="btn btn-ghost" href="{{ url_for('login', next=request.path) }}">Sign in to create an entry →</a>
                   {% endif %}
                 </div>
                 {% endfor %}
