@@ -1,4 +1,4 @@
-name: Deploy Flask Website
+name: Deploy Website
 
 on:
   push:
@@ -13,37 +13,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Deploy files to EC2
+      - name: Deploy files
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-
           source: "./"
           target: "/home/ec2-user/portfolio"
-
-          overwrite: true
-
           exclude: |
             .git/**
             .github/**
-            instance/**
-            *.db
-            .env
 
-      - name: Restart Flask Server
+      - name: Restart Flask
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-
           script: |
-            cd /home/ec2-user/portfolio
-
+            cd ~/portfolio
             source venv/bin/activate
-
             pip install -r requirements.txt
-
             sudo systemctl restart portfolio
