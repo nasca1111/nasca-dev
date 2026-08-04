@@ -1,6 +1,13 @@
-# macOS Finder metadata
-.DS_Store
+# Database
+instance/
+*.db
 
-# Python bytecode cache
+# Python
 __pycache__/
-*.py[cod]
+*.pyc
+
+# Environment
+.env
+
+# macOS
+.DS_Store
