@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login — Nasca</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <main class="login-page">
+      <form class="login-card" method="POST">
+        <p>NASCA / ADMIN ACCESS</p>
+        <h1>Sign in</h1>
+        {% with messages = get_flashed_messages() %} {% for message in messages
+        %}
+        <div class="login-error">{{ message }}</div>
+        {% endfor %} {% endwith %}
+        <label
+          >Password<input
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+        /></label>
+        <button class="btn btn-ghost" type="submit">Sign in →</button>
+      </form>
+    </main>
+  </body>
+</html>

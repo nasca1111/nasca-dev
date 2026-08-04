@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css">
   </head>
   <body>
     <header>
@@ -36,6 +36,49 @@
             <h1>Nasca</h1>
             <div class="role">
               Undergraduate student in computer engineering
+            </div>
+            {% if is_admin %}
+            <div class="admin-actions">
+              <button class="btn btn-ghost" id="openWrite" type="button">Write Entry</button>
+              <form action="{{ url_for('logout') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <button class="admin-logout" type="submit">Log out</button>
+              </form>
+            </div>
+            {% else %}
+            <a class="btn btn-ghost" href="{{ url_for('login', next=request.path) }}">Write Entry</a>
+            {% endif %}
+            <div class="hero-posts">
+              <div class="hero-posts-head">
+                <span>PERSONAL LOG</span>
+                <span>{% if is_admin %}CLICK TO EDIT{% else %}RECENT ENTRIES{% endif %}</span>
+              </div>
+              <div class="post-list">
+                {% for post in posts %}
+                <button
+                  class="post-item"
+                  type="button"
+                  data-post-id="{{ post.id }}"
+                  data-post-title="{{ post.title }}"
+                  data-post-content="{{ post.content }}"
+                  {% if is_admin %}data-editable{% endif %}
+                >
+                  <span class="post-item-id">LOG-{{ '%03d'|format(post.id) }}</span>
+                  <span class="post-item-title">{{ post.title }}</span>
+                  <span class="post-item-date">{{ post.created_at.strftime('%Y.%m.%d %H:%M') }}</span>
+                  {% if is_admin %}<span class="post-item-edit">EDIT →</span>{% endif %}
+                </button>
+                {% else %}
+                <div class="post-empty">
+                  <span>NO ENTRIES YET</span>
+                  {% if is_admin %}
+                  <button class="post-empty-button" type="button" data-open-write>Create First Entry →</button>
+                  {% else %}
+                  <a class="post-empty-button" href="{{ url_for('login', next=request.path) }}">Sign in to create an entry →</a>
+                  {% endif %}
+                </div>
+                {% endfor %}
+              </div>
             </div>
           </div>
           <div class="file-card">
@@ -171,9 +214,29 @@
           </div>
       </section>
 
+      <section id="visitor-log">
+        <div class="sec-head">
+          <span class="sec-num">§5</span><span class="sec-title">Recent Visitors</span>
+        </div>
+        <div class="visitor-log reveal">
+          <div class="visitor-log-head">
+            <span>VISITED AT</span>
+            <span>IP ADDRESS</span>
+          </div>
+          {% for visitor in recent_visitors %}
+          <div class="visitor-row">
+            <time datetime="{{ visitor.visited_at.isoformat() }}">{{ visitor.visited_at.strftime('%Y.%m.%d %H:%M') }}</time>
+            <span>{% if is_admin %}{{ visitor.ip }}{% else %}{{ mask_ip(visitor.ip) }}{% endif %}</span>
+          </div>
+          {% else %}
+          <div class="visitor-row visitor-empty">NO VISITS RECORDED</div>
+          {% endfor %}
+        </div>
+      </section>
+
       <section id="contact" style="border-top: none">
         <div class="contact-box reveal">
-          <div class="contact-eyebrow">§5 — CONTACT</div>
+          <div class="contact-eyebrow">§6 — CONTACT</div>
           <div class="term-list">
             <div class="term-line">
               <span class="term-prompt">$</span>contact --email
@@ -199,7 +262,48 @@
       <p>// END OF REPORT — © 2026 Nasca. ALL RIGHTS RESERVED.</p>
     </footer>
 
-    <script src="js/hoverFuc.js"></script>
-    <script src="js/syslog.js"></script>
+    <div
+      id="writeModal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="writeModalTitle"
+    >
+      <div class="modal-content">
+        <div class="modal-head">
+          <div>
+            <p class="modal-eyebrow" id="modalMode">CASE FILE / NEW ENTRY</p>
+            <h2 id="writeModalTitle">New Entry</h2>
+          </div>
+          <button id="closeWrite" class="modal-close" type="button" aria-label="Close entry dialog">×</button>
+        </div>
+        <div class="modal-meta" aria-hidden="true">
+          <span id="modalReference">REF. NOTE-NEW</span>
+          <span id="modalState">DRAFT / LOCAL</span>
+        </div>
+        <form id="writeForm" class="write-form" action="/write" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <label>
+            <span class="field-label">01 / TITLE</span>
+            <input type="text" name="title" placeholder="Enter a title" required />
+          </label>
+          <label>
+            <span class="field-label">02 / CONTENT</span>
+            <textarea name="content" placeholder="Write your entry" required></textarea>
+          </label>
+          <div class="modal-actions">
+            <button id="deletePost" class="btn btn-ghost" type="submit" form="deleteForm" hidden>Delete</button>
+            <button class="btn btn-ghost" type="submit">Save Entry →</button>
+          </div>
+        </form>
+        <form id="deleteForm" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        </form>
+        <p class="modal-note">// Entries are saved to your personal log.</p>
+      </div>
+    </div>
+
+    <script src="/static/js/hoverFuc.js"></script>
+    <script src="/static/js/syslog.js"></script>
   </body>
 </html>

@@ -28,9 +28,6 @@ body {
   font-family: var(--sans);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
-  background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
   background-size: 64px 64px;
   background-position: -1px -1px;
   background-attachment: fixed;
@@ -42,9 +39,6 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
   background-size: 64px 64px;
   opacity: 0.35;
   pointer-events: none;
@@ -197,6 +191,9 @@ h1 {
   flex-wrap: wrap;
 }
 .btn {
+  background: transparent;
+  border: 0;
+  cursor: pointer;
   font-family: var(--mono);
   font-size: 13px;
   letter-spacing: 0.04em;
@@ -225,6 +222,78 @@ h1 {
 .btn-ghost:hover {
   background: var(--ink);
   color: var(--black);
+}
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-logout {
+  border: 0;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.post-item:not([data-editable]) {
+  cursor: default;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+}
+
+.login-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+}
+
+.login-card {
+  display: grid;
+  width: min(100%, 390px);
+  gap: 16px;
+  padding: 30px;
+  border: 1px solid rgb(245 239 224 / 35%);
+  background: #202020;
+}
+
+.login-card > p {
+  color: var(--alert);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.login-card h1 {
+  font-size: 28px;
+}
+
+.login-card label {
+  display: grid;
+  gap: 7px;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+.login-card input {
+  border: 1px solid rgb(245 239 224 / 35%);
+  padding: 11px 12px;
+  background: #171717;
+  color: var(--ink);
+  font: inherit;
+}
+
+.login-error {
+  padding: 10px;
+  border: 1px solid var(--alert);
+  color: var(--alert);
+  font-size: 13px;
 }
 
 .file-card {
@@ -535,6 +604,71 @@ section {
   text-align: right;
 }
 
+/* ---------- visitor log ---------- */
+.visitor-log {
+  max-height: 178px;
+  overflow-y: auto;
+  border: 1px solid rgb(245 239 224 / 30%);
+  background: rgb(0 0 0 / 20%);
+  font-family: var(--mono);
+  scrollbar-color: var(--ink-faint) var(--black);
+  scrollbar-width: thin;
+}
+
+.visitor-log::-webkit-scrollbar {
+  width: 6px;
+}
+
+.visitor-log::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: var(--ink-faint);
+}
+
+.visitor-log::-webkit-scrollbar-track {
+  background: var(--black);
+}
+
+.visitor-log-head,
+.visitor-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(130px, 0.8fr);
+  gap: 20px;
+  align-items: center;
+  padding: 13px 16px;
+}
+
+.visitor-log-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid rgb(245 239 224 / 30%);
+  background: #1a1a1a;
+  color: var(--ink-faint);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+}
+
+.visitor-row {
+  border-bottom: 1px solid rgb(245 239 224 / 13%);
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+.visitor-row:last-child {
+  border-bottom: 0;
+}
+
+.visitor-row span {
+  color: var(--clearance);
+}
+
+.visitor-empty {
+  display: block;
+  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+}
+
 /* ---------- contact ---------- */
 .contact-box {
   background: var(--ink);
@@ -728,6 +862,341 @@ footer p {
   background: #2bee34;
   opacity: 0.4;
   animation: ping 1.5s infinite;
+}
+
+/* ---------- write modal ---------- */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  place-items: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 78%);
+  backdrop-filter: blur(7px);
+}
+
+.modal.is-open {
+  display: grid;
+}
+
+.modal-content {
+  width: min(100%, 560px);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  padding: 30px;
+  background-color: #202020;
+  background-image:
+    linear-gradient(rgb(245 239 224 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(245 239 224 / 4%) 1px, transparent 1px);
+  background-size: 28px 28px;
+  resize: none;
+  color: var(--ink);
+  border: 1px solid #77736a;
+  border-radius: 2px;
+  box-shadow: 0 24px 80px rgb(0 0 0 / 55%);
+  position: relative;
+}
+
+.modal-content::before {
+  content: "CLASSIFIED / PERSONAL LOG";
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  color: rgb(245 239 224 / 28%);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+.modal-head,
+.modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-head {
+  margin-bottom: 18px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid rgb(245 239 224 / 24%);
+}
+
+.modal-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+  color: var(--alert);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.modal-eyebrow span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--alert);
+  box-shadow: 0 0 0 4px rgb(255 0 0 / 15%);
+}
+
+.modal-content h2 {
+  font-family: var(--mono);
+  font-size: 25px;
+  letter-spacing: -0.04em;
+}
+
+.modal-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgb(245 239 224 / 45%);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 25px;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  background: var(--ink);
+  color: var(--black);
+}
+
+.modal-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 26px;
+  color: var(--ink-faint);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.write-form {
+  display: grid;
+  gap: 22px;
+}
+
+.write-form label {
+  display: grid;
+  gap: 9px;
+}
+
+.field-label {
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.write-form input,
+.write-form textarea {
+  width: 100%;
+  display: block;
+  border: 1px solid rgb(245 239 224 / 35%);
+  border-radius: 0;
+  padding: 13px 14px;
+  background: rgb(0 0 0 / 32%);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: normal;
+}
+
+.write-form textarea {
+  min-height: 180px;
+  resize: vertical;
+}
+
+.write-form input:focus,
+.write-form textarea:focus {
+  outline: 1px solid var(--ink);
+  border-color: var(--ink);
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 12px;
+  margin-top: 2px;
+  padding-top: 22px;
+  border-top: 1px solid rgb(245 239 224 / 20%);
+}
+
+.modal-actions .btn {
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 16px;
+}
+
+.modal-note {
+  margin-top: 18px;
+  color: var(--ink-faint);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+}
+
+@media (max-width: 520px) {
+  .modal {
+    padding: 12px;
+  }
+
+  .modal-content {
+    max-height: calc(100vh - 24px);
+    padding: 24px 20px;
+  }
+
+  .modal-content::before,
+  .modal-meta span:first-child {
+    display: none;
+  }
+
+  .modal-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-actions .btn:first-child {
+    order: 2;
+  }
+}
+
+/* ---------- personal log post list ---------- */
+.hero-posts {
+  margin-top: 28px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: rgb(0 0 0 / 20%);
+  overflow: hidden;
+}
+
+.hero-posts-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgb(245 239 224 / 30%);
+  background: #1a1a1a;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* 게시글 5개 높이만큼만 보이고 이후엔 스크롤 */
+.post-list {
+  --post-row-h: 54px;
+  max-height: calc(var(--post-row-h) * 5);
+  overflow-y: auto;
+  scrollbar-color: var(--ink-faint) var(--black);
+  scrollbar-width: thin;
+}
+.post-list::-webkit-scrollbar {
+  width: 6px;
+}
+.post-list::-webkit-scrollbar-thumb {
+  background: var(--ink-faint);
+  border-radius: 10px;
+}
+.post-list::-webkit-scrollbar-track {
+  background: var(--black);
+}
+
+.post-item {
+  width: 100%;
+  min-height: var(--post-row-h, 54px);
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 0;
+  border-bottom: 1px solid rgb(245 239 224 / 13%);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.post-item:not([data-editable]) {
+  cursor: default;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+}
+.post-item:last-child {
+  border-bottom: 0;
+}
+.post-item:hover,
+.post-item:focus-visible {
+  background: rgb(245 239 224 / 5%);
+  outline: none;
+}
+
+.post-item-id {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+}
+.post-item-title {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.post-item-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+}
+.post-item-edit {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: #2bee34;
+  white-space: nowrap;
+}
+
+.post-empty {
+  padding: 26px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+.post-empty-button {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #2bee34;
+  text-decoration: none;
+  border-bottom: 1px solid #2bee34;
+  white-space: nowrap;
+}
+.post-empty-button:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+@media (max-width: 560px) {
+  .post-item,
+  .post-item:not([data-editable]) {
+    grid-template-columns: 1fr auto;
+    row-gap: 4px;
+  }
+  .post-item-id,
+  .post-item-date {
+    display: none;
+  }
 }
 
 @keyframes pulse {

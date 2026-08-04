@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{ post.title }}</title>
+  </head>
+
+  <body>
+    <h1>{{ post.title }}</h1>
+
+    <p>{{ post.content }}</p>
+
+    <hr />
+
+    <p>Created: {{ post.created_at }}</p>
+
+    <a href="/posts"> Back </a>
+
+    {% if is_admin %}
+    <a href="/post/{{ post.id }}/edit"> Edit </a>
+    <form action="/post/{{ post.id }}/delete" method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <button type="submit">Delete</button>
+    </form>
+    {% endif %}
+  </body>
+</html>

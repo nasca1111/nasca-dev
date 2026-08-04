@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Visitor Logs</title>
+    <h1>Visitor Dashboard</h1>
+
+    <h2>Visitors Today: {{ today_visitors }}</h2>
+
+    <h2>Total Visitors: {{ total_visitors }}</h2>
+  </head>
+
+  <body>
+    <h1>Visitor Logs</h1>
+
+    <table border="1">
+      <tr>
+        <th>ID</th>
+        <th>IP</th>
+        <th>Page</th>
+        <th>User Agent</th>
+        <th>Time</th>
+      </tr>
+
+      {% for visitor in visitors %}
+      <tr>
+        <td>{{ visitor.id }}</td>
+        <td>{{ visitor.ip }}</td>
+        <td>{{ visitor.page }}</td>
+        <td>{{ visitor.user_agent }}</td>
+        <td>{{ visitor.visited_at }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </body>
+</html>

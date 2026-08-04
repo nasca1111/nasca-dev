@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Posts</title>
+  </head>
+
+  <body>
+    <h1>Posts</h1>
+
+    <a href="/write"> Write Post </a>
+
+    <hr />
+
+    {% for post in posts %}
+
+    <h2>
+      <a href="/post/{{ post.id }}"> {{ post.title }} </a>
+    </h2>
+
+    <p>{{ post.content }}</p>
+
+    <p>{{ post.created_at }}</p>
+
+    <hr />
+
+    {% endfor %}
+  </body>
+</html>
