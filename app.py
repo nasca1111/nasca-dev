@@ -94,10 +94,15 @@ def mask_ip(value):
 @app.route("/")
 def home():
 
+    visitor_ip = request.headers.get(
+        "X-Forwarded-For",
+        request.remote_addr
+    ).split(",")[0].strip()
+
     visitor = Visitor(
-        ip = request.remote_addr,
-        page = request.path,
-        user_agent = request.headers.get("User-Agent")
+        ip=visitor_ip,
+        page=request.path,
+        user_agent=request.headers.get("User-Agent")
     )
 
     db.session.add(visitor)
