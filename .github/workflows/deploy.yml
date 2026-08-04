@@ -26,7 +26,7 @@ jobs:
             .github/**
             venv/**
             __pycache__/**
-            instance/*.db
+            instance/**
 
       - name: Restart Flask
         uses: appleboy/ssh-action@v1.0.3
