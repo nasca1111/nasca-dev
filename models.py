@@ -1,4 +1,7 @@
-from extensions import db # Database definition
+from extensions import db
+from datetime import datetime, timezone, timedelta
+
+JST = timezone(timedelta(hours=9))
 
 
 class Visitor(db.Model):
@@ -8,11 +11,12 @@ class Visitor(db.Model):
     user_agent = db.Column(db.String(200))
     visited_at = db.Column(
         db.DateTime,
-        default=db.func.current_timestamp()
+        default=lambda: datetime.now(JST)
     )
 
     def __repr__(self):
         return f"<Visitor {self.ip}>"
+
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,8 +24,8 @@ class Post(db.Model):
     content = db.Column(db.Text, nullable=False)
     created_at = db.Column(
         db.DateTime,
-        default=db.func.current_timestamp()
+        default=lambda: datetime.now(JST)
     )
 
-def __repr__(self):
-    return f"<Post {self.title}>"
+    def __repr__(self):
+        return f"<Post {self.title}>"
