@@ -14,7 +14,7 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "change-this-secret-key-
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/ec2-user/data/app.db"
-
+#test
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
