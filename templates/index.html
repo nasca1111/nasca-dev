@@ -61,7 +61,7 @@
                   data-post-id="{{ post.id }}"
                   data-post-title="{{ post.title }}"
                   data-post-content="{{ post.content }}"
-                  data-editable
+                  {% if is_admin %}data-editable{% endif %}
                 >
                   <span class="post-item-id">LOG-{{ '%03d'|format(post.id) }}</span>
                   <span class="post-item-title">{{ post.title }}</span>
@@ -294,6 +294,47 @@
         <p class="modal-note">// Entries are saved to your personal log.</p>
       </div>
     </div>
+
+    <div
+      id="readModal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="readModalTitle"
+    >
+      <div class="modal-content">
+
+        <div class="modal-head">
+          <div>
+            <p class="modal-eyebrow">CASE FILE / VIEW ENTRY</p>
+            <h2 id="readModalTitle"></h2>
+          </div>
+          <button id="closeRead" class="modal-close" type="button">
+            ×
+          </button>
+        </div>
+
+        <div class="modal-meta">
+          <span id="readReference"></span>
+          <span id="readDate"></span>
+        </div>
+
+        <div class="write-form">
+          <label>
+            <span class="field-label">01 / TITLE</span>
+            <input id="readTitle" type="text" readonly>
+          </label>
+          <label>
+            <span class="field-label">02 / CONTENT</span>
+            <textarea id="readContent" readonly></textarea>
+          </label>
+        </div>
+        <p class="modal-note">
+          // Public entry log.
+        </p>
+      </div>
+  </div>
+
 
     <script src="/static/js/hoverFuc.js"></script>
     <script src="/static/js/syslog.js"></script>

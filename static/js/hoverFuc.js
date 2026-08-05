@@ -59,7 +59,9 @@ function closeModal() {
 if (modal && openBtn && closeBtn) {
   openBtn.addEventListener("click", openWriteModal);
   emptyWriteBtn?.addEventListener("click", openWriteModal);
-  postItems.forEach((post) => post.addEventListener("click", () => openEditModal(post)));
+  postItems.forEach((post) =>
+    post.addEventListener("click", () => openEditModal(post)),
+  );
 
   closeBtn.addEventListener("click", closeModal);
   cancelBtn.addEventListener("click", closeModal);
@@ -77,3 +79,20 @@ if (modal && openBtn && closeBtn) {
     if (event.key === "Escape") closeModal();
   });
 }
+
+const readModal = document.getElementById("readModal");
+const readTitle = document.getElementById("readTitle");
+const readContent = document.getElementById("readContent");
+
+document.querySelectorAll(".post-item").forEach((post) => {
+  post.addEventListener("click", () => {
+    readTitle.value = post.dataset.postTitle;
+    readContent.value = post.dataset.postContent;
+
+    readModal.classList.add("open");
+  });
+});
+
+document.getElementById("closeRead").addEventListener("click", () => {
+  readModal.classList.remove("open");
+});
