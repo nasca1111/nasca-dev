@@ -110,6 +110,8 @@ def home():
         user_agent=request.headers.get("User-Agent")
     )
 
+
+
     db.session.add(visitor)
     db.session.commit()
 
@@ -121,6 +123,12 @@ def home():
         .limit(50)
         .all()
     )
+
+    total_visitors = Visitor.query.count()
+    today = datetime.now().date()
+    today_visitors = Visitor.query.filter(
+    db.func.date(Visitor.visited_at) == today
+    ).count()
 
     return render_template(
         "index.html",
