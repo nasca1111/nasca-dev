@@ -125,8 +125,8 @@ def home():
     return render_template(
         "index.html",
         posts=posts,
-        recent_visitors=recent_visitors,
-        mask_ip=mask_ip,
+        today_visitors=today_visitors,
+        total_visitors=total_visitors
     )
 
 @app.route("/test-db")
