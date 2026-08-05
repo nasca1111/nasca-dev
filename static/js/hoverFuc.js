@@ -83,16 +83,25 @@ if (modal && openBtn && closeBtn) {
 const readModal = document.getElementById("readModal");
 const readTitle = document.getElementById("readTitle");
 const readContent = document.getElementById("readContent");
+const closeRead = document.getElementById("closeRead");
 
-document.querySelectorAll(".post-item").forEach((post) => {
-  post.addEventListener("click", () => {
-    readTitle.value = post.dataset.postTitle;
-    readContent.value = post.dataset.postContent;
+if (readModal && closeRead) {
+  document.querySelectorAll(".post-item").forEach((post) => {
+    post.addEventListener("click", () => {
+      readTitle.value = post.dataset.postTitle;
+      readContent.value = post.dataset.postContent;
 
-    readModal.classList.add("open");
+      readModal.classList.add("is-open");
+    });
   });
-});
 
-document.getElementById("closeRead").addEventListener("click", () => {
-  readModal.classList.remove("open");
-});
+  closeRead.addEventListener("click", () => {
+    readModal.classList.remove("is-open");
+  });
+
+  readModal.addEventListener("click", (event) => {
+    if (event.target === readModal) {
+      readModal.classList.remove("is-open");
+    }
+  });
+}
