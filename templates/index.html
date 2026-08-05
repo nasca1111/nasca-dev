@@ -218,17 +218,11 @@
         </div>
         <div class="visitor-log reveal">
           <div class="visitor-log-head">
-            <span>VISITED AT</span>
-            <span>IP ADDRESS</span>
           </div>
-          {% for visitor in recent_visitors %}
           <div class="visitor-row">
-            <time datetime="{{ visitor.visited_at.isoformat() }}">{{ visitor.visited_at.strftime('%Y.%m.%d %H:%M') }}</time>
-            <span>{% if is_admin %}{{ visitor.ip }}{% else %}{{ mask_ip(visitor.ip) }}{% endif %}</span>
+          <span>Visitors Today: {{ today_visitors }}</span>
+          <span>Total Visitors: {{ total_visitors }}</span>
           </div>
-          {% else %}
-          <div class="visitor-row visitor-empty">NO VISITS RECORDED</div>
-          {% endfor %}
         </div>
       </section>
 
