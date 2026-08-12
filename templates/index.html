@@ -155,7 +155,6 @@
           </form>
           {% endif %}
         </div>
-        <p class="learning-intro">Select a learning category to write and manage your study notes.</p>
         <div class="learning-tabs" role="tablist" aria-label="Learning categories">
           {% for category in learning_categories %}
           <button class="learning-tab{% if loop.first %} is-active{% endif %}" type="button" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="learning-category-{{ category.id }}" data-tab-target="learning-category-{{ category.id }}">{{ category.name }}</button>
