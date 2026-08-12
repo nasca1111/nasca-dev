@@ -14,6 +14,23 @@ document.querySelectorAll("[data-tab-target]").forEach((tab) => {
     document.querySelectorAll(panelSelector).forEach((panel) => {
       panel.classList.toggle("is-active", panel === target);
     });
+    tab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    const navigation = tab.closest(".learning-entry-navigation");
+    navigation?.querySelector("[data-entry-jump]") && (navigation.querySelector("[data-entry-jump]").value = tab.dataset.tabTarget);
+  });
+});
+
+document.querySelectorAll("[data-entry-scroll]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const tabList = document.getElementById(button.getAttribute("aria-controls"));
+    const direction = button.dataset.entryScroll === "next" ? 1 : -1;
+    tabList?.scrollBy({ left: direction * Math.max(220, tabList.clientWidth * 0.7), behavior: "smooth" });
+  });
+});
+
+document.querySelectorAll("[data-entry-jump]").forEach((select) => {
+  select.addEventListener("change", () => {
+    document.querySelector(`[data-tab-target="${select.value}"]`)?.click();
   });
 });
 

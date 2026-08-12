@@ -60,23 +60,37 @@
         <button class="btn btn-primary" type="submit">Save entry →</button>
       </form>
       {% endif %} {% if entries %}
-      <div
-        class="learning-entry-tabs"
-        role="tablist"
-        aria-label="{{ category.name }} entries"
-      >
-        {% for entry in entries %}
-        <button
-          class="learning-tab{% if loop.first %} is-active{% endif %}"
-          type="button"
-          role="tab"
-          aria-selected="{{ 'true' if loop.first else 'false' }}"
-          aria-controls="entry-{{ entry.id }}"
-          data-tab-target="entry-{{ entry.id }}"
-        >
-          {{ entry.title }}
-        </button>
-        {% endfor %}
+      <div class="learning-entry-navigation">
+        <label class="entry-jump-label" for="entryJump">Jump to entry
+          <select id="entryJump" class="entry-jump-select" data-entry-jump>
+            {% for entry in entries %}
+            <option value="entry-{{ entry.id }}">{{ loop.index }}. {{ entry.title }}</option>
+            {% endfor %}
+          </select>
+        </label>
+        <div class="entry-tab-controls">
+          <button class="entry-tab-arrow" type="button" data-entry-scroll="previous" aria-controls="learningEntryTabs" aria-label="Show previous entries">←</button>
+          <div
+            id="learningEntryTabs"
+            class="learning-entry-tabs"
+            role="tablist"
+            aria-label="{{ category.name }} entries"
+          >
+            {% for entry in entries %}
+            <button
+              class="learning-tab{% if loop.first %} is-active{% endif %}"
+              type="button"
+              role="tab"
+              aria-selected="{{ 'true' if loop.first else 'false' }}"
+              aria-controls="entry-{{ entry.id }}"
+              data-tab-target="entry-{{ entry.id }}"
+            >
+              <span class="entry-tab-number">{{ '%02d'|format(loop.index) }}</span>{{ entry.title }}
+            </button>
+            {% endfor %}
+          </div>
+          <button class="entry-tab-arrow" type="button" data-entry-scroll="next" aria-controls="learningEntryTabs" aria-label="Show next entries">→</button>
+        </div>
       </div>
       <section class="learning-board-list">
         {% for entry in entries %}
