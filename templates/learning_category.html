@@ -22,28 +22,52 @@
       {% endwith %}
 
       {% if is_admin %}
-      <form class="learning-editor" method="POST">
+      <form class="learning-editor rich-editor-form" method="POST">
         <h2>New learning entry</h2>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <label>Title<input name="title" maxlength="200" required /></label>
-        <label>Content<textarea name="content" required></textarea></label>
+        <label>Content
+          <span class="rich-toolbar" aria-label="Text formatting">
+            <button type="button" data-command="bold" title="Bold"><b>B</b></button>
+            <button type="button" data-command="italic" title="Italic"><i>I</i></button>
+            <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+            <label class="rich-color" title="Text color">Color <input type="color" value="#f5efe0" /></label>
+          </span>
+          <div class="rich-editor" contenteditable="true" data-placeholder="Write your entry"></div>
+          <input class="rich-editor-value" type="hidden" name="content" required />
+        </label>
         <button class="btn btn-primary" type="submit">Save entry →</button>
       </form>
       {% endif %}
 
+      {% if entries %}
+      <div class="learning-entry-tabs" role="tablist" aria-label="{{ category.name }} entries">
+        {% for entry in entries %}
+        <button class="learning-tab{% if loop.first %} is-active{% endif %}" type="button" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="entry-{{ entry.id }}" data-tab-target="entry-{{ entry.id }}">{{ entry.title }}</button>
+        {% endfor %}
+      </div>
       <section class="learning-board-list">
         {% for entry in entries %}
-        <article class="learning-board-entry" id="entry-{{ entry.id }}">
+        <article class="learning-board-entry learning-entry-panel{% if loop.first %} is-active{% endif %}" id="entry-{{ entry.id }}" role="tabpanel">
           <div class="learning-board-entry-meta">{{ entry.created_at.strftime('%Y.%m.%d %H:%M') }}</div>
           <h2>{{ entry.title }}</h2>
-          <p>{{ entry.content }}</p>
+          <div class="learning-entry-content">{{ entry.content|learning_html }}</div>
           {% if is_admin %}
           <details class="learning-edit-details">
             <summary>Edit entry</summary>
-            <form method="POST" action="{{ url_for('edit_learning_entry', entry_id=entry.id) }}" class="learning-editor compact">
+            <form method="POST" action="{{ url_for('edit_learning_entry', entry_id=entry.id) }}" class="learning-editor compact rich-editor-form">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
               <label>Title<input name="title" value="{{ entry.title }}" maxlength="200" required /></label>
-              <label>Content<textarea name="content" required>{{ entry.content }}</textarea></label>
+              <label>Content
+                <span class="rich-toolbar" aria-label="Text formatting">
+                  <button type="button" data-command="bold" title="Bold"><b>B</b></button>
+                  <button type="button" data-command="italic" title="Italic"><i>I</i></button>
+                  <button type="button" data-command="underline" title="Underline"><u>U</u></button>
+                  <label class="rich-color" title="Text color">Color <input type="color" value="#f5efe0" /></label>
+                </span>
+                <div class="rich-editor" contenteditable="true">{{ entry.content|learning_html }}</div>
+                <input class="rich-editor-value" type="hidden" name="content" required />
+              </label>
               <button class="btn btn-ghost" type="submit">Update</button>
             </form>
           </details>
@@ -53,10 +77,11 @@
           </form>
           {% endif %}
         </article>
-        {% else %}
-        <p class="learning-empty-state">이 카테고리에 작성된 학습 내용이 없습니다.</p>
         {% endfor %}
       </section>
+      {% else %}
+      <p class="learning-empty-state">이 카테고리에 작성된 학습 내용이 없습니다.</p>
+      {% endif %}
 
       {% if is_admin %}
       <form method="POST" action="{{ url_for('delete_learning_category', category_id=category.id) }}" class="learning-delete-category">
@@ -65,5 +90,6 @@
       </form>
       {% endif %}
     </main>
+    <script src="/static/js/learningTabs.js"></script>
   </body>
 </html>

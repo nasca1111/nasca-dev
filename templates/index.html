@@ -156,9 +156,14 @@
           {% endif %}
         </div>
         <p class="learning-intro">학습 분야를 선택하면 게시판에서 학습 기록을 작성하고 관리할 수 있습니다.</p>
-        <div class="learning-category-grid reveal">
+        <div class="learning-tabs" role="tablist" aria-label="Learning categories">
           {% for category in learning_categories %}
-          <article class="learning-category-card">
+          <button class="learning-tab{% if loop.first %} is-active{% endif %}" type="button" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="learning-category-{{ category.id }}" data-tab-target="learning-category-{{ category.id }}">{{ category.name }}</button>
+          {% endfor %}
+        </div>
+        <div class="learning-category-panels reveal">
+          {% for category in learning_categories %}
+          <article id="learning-category-{{ category.id }}" class="learning-category-card learning-category-panel{% if loop.first %} is-active{% endif %}" role="tabpanel">
             <div class="learning-category-title-row">
               <a href="{{ url_for('learning_category', category_id=category.id) }}" class="learning-category-title">{{ category.name }}</a>
               <span>{{ category.entries|length }} POSTS</span>
@@ -375,5 +380,6 @@
 
     <script src="/static/js/hoverFuc.js"></script>
     <script src="/static/js/syslog.js"></script>
+    <script src="/static/js/learningTabs.js"></script>
   </body>
 </html>

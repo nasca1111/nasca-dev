@@ -1,10 +1,14 @@
 import hmac
 import os
+import re
 import secrets
 from functools import wraps
+from html import escape
+from html.parser import HTMLParser
 from ipaddress import ip_address
 
 from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
+from markupsafe import Markup
 from werkzeug.security import check_password_hash
 from extensions import db
 
@@ -24,6 +28,46 @@ ADMIN_PASSWORD_HASH = "scrypt:32768:8:1$AZoWWcB3tzxYAVCu$63fafb5009397187f33e0a3
 db.init_app(app)
 
 from models import Visitor, Post, LearningCategory, LearningEntry
+
+
+class LearningHtmlSanitizer(HTMLParser):
+    """Keep only the small set of formatting tags supported by the editor."""
+    allowed_tags = {"b", "strong", "i", "em", "u", "span", "br", "p", "div", "ul", "ol", "li"}
+
+    def __init__(self):
+        super().__init__()
+        self.parts = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag not in self.allowed_tags:
+            return
+        if tag == "span":
+            color = dict(attrs).get("style", "")
+            if re.fullmatch(r"color:\s*(#[0-9a-fA-F]{3,8}|rgb\([0-9, ]+\))\s*;?", color):
+                self.parts.append(f'<span style="{escape(color, quote=True)}">')
+                return
+        self.parts.append(f"<{tag}>")
+
+    def handle_endtag(self, tag):
+        if tag in self.allowed_tags and tag != "br":
+            self.parts.append(f"</{tag}>")
+
+    def handle_data(self, data):
+        self.parts.append(escape(data))
+
+    def result(self):
+        return "".join(self.parts)
+
+
+def sanitize_learning_html(value):
+    sanitizer = LearningHtmlSanitizer()
+    sanitizer.feed(value or "")
+    return sanitizer.result()
+
+
+@app.template_filter("learning_html")
+def learning_html(value):
+    return Markup(sanitize_learning_html(value))
 
 
 def is_admin():
@@ -164,7 +208,7 @@ def learning_category(category_id):
             return redirect(url_for("login", next=request.path))
         validate_csrf()
         title = request.form.get("title", "").strip()
-        content = request.form.get("content", "").strip()
+        content = sanitize_learning_html(request.form.get("content", ""))
         if not title or not content:
             flash("Title and content are required.")
         else:
@@ -184,7 +228,7 @@ def edit_learning_entry(entry_id):
     validate_csrf()
     entry = LearningEntry.query.get_or_404(entry_id)
     title = request.form.get("title", "").strip()
-    content = request.form.get("content", "").strip()
+    content = sanitize_learning_html(request.form.get("content", ""))
     if title and content:
         entry.title = title
         entry.content = content
