@@ -32,29 +32,68 @@ from models import Visitor, Post, LearningCategory, LearningEntry, LoginAttempt,
 
 
 class LearningHtmlSanitizer(HTMLParser):
-    """Keep only the small set of formatting tags supported by the editor."""
-    allowed_tags = {"b", "strong", "i", "em", "u", "span", "br", "p", "div", "ul", "ol", "li"}
+    """Keep common pasted document formatting while removing active content."""
+    allowed_tags = {
+        "a", "b", "blockquote", "br", "code", "div", "em", "h1", "h2", "h3",
+        "h4", "h5", "h6", "hr", "i", "li", "ol", "p", "pre", "s", "span",
+        "strong", "table", "tbody", "td", "th", "thead", "tr", "u", "ul",
+    }
+    void_tags = {"br", "hr"}
+    blocked_tags = {"script", "style", "iframe", "object", "embed", "svg", "math"}
 
     def __init__(self):
         super().__init__()
         self.parts = []
+        self.blocked_depth = 0
+
+    @staticmethod
+    def safe_style(value):
+        """Allow only basic visual styles used by pasted ChatGPT content."""
+        allowed = []
+        for declaration in value.split(";"):
+            if ":" not in declaration:
+                continue
+            property_name, property_value = (part.strip() for part in declaration.split(":", 1))
+            if property_name == "color" and re.fullmatch(r"#[0-9a-fA-F]{3,8}|rgb\([0-9, ]+\)", property_value):
+                allowed.append(f"color: {property_value}")
+            elif property_name == "background-color" and re.fullmatch(r"#[0-9a-fA-F]{3,8}|rgb\([0-9, ]+\)", property_value):
+                allowed.append(f"background-color: {property_value}")
+            elif property_name == "text-align" and property_value in {"left", "center", "right"}:
+                allowed.append(f"text-align: {property_value}")
+        return "; ".join(allowed)
 
     def handle_starttag(self, tag, attrs):
+        if tag in self.blocked_tags:
+            self.blocked_depth += 1
+            return
+        if self.blocked_depth:
+            return
         if tag not in self.allowed_tags:
             return
-        if tag == "span":
-            color = dict(attrs).get("style", "")
-            if re.fullmatch(r"color:\s*(#[0-9a-fA-F]{3,8}|rgb\([0-9, ]+\))\s*;?", color):
-                self.parts.append(f'<span style="{escape(color, quote=True)}">')
-                return
-        self.parts.append(f"<{tag}>")
+        attributes = dict(attrs)
+        safe_attributes = []
+        style = self.safe_style(attributes.get("style", ""))
+        if style:
+            safe_attributes.append(f'style="{escape(style, quote=True)}"')
+        if tag == "a":
+            href = attributes.get("href", "")
+            if re.fullmatch(r"(https?://|mailto:|/|#)[^\s]*", href, re.IGNORECASE):
+                safe_attributes.append(f'href="{escape(href, quote=True)}"')
+                safe_attributes.append('rel="noopener noreferrer"')
+                if href.startswith(("http://", "https://")):
+                    safe_attributes.append('target="_blank"')
+        suffix = f" {' '.join(safe_attributes)}" if safe_attributes else ""
+        self.parts.append(f"<{tag}{suffix}>")
 
     def handle_endtag(self, tag):
-        if tag in self.allowed_tags and tag != "br":
+        if tag in self.blocked_tags:
+            self.blocked_depth = max(0, self.blocked_depth - 1)
+        elif not self.blocked_depth and tag in self.allowed_tags and tag not in self.void_tags:
             self.parts.append(f"</{tag}>")
 
     def handle_data(self, data):
-        self.parts.append(escape(data))
+        if not self.blocked_depth:
+            self.parts.append(escape(data))
 
     def result(self):
         return "".join(self.parts)
