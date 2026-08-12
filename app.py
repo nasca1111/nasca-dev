@@ -2,6 +2,7 @@ import hmac
 import os
 import re
 import secrets
+from datetime import datetime, time, timedelta
 from functools import wraps
 from html import escape
 from html.parser import HTMLParser
@@ -27,7 +28,7 @@ ADMIN_PASSWORD_HASH = "scrypt:32768:8:1$AZoWWcB3tzxYAVCu$63fafb5009397187f33e0a3
 
 db.init_app(app)
 
-from models import Visitor, Post, LearningCategory, LearningEntry
+from models import Visitor, Post, LearningCategory, LearningEntry, LoginAttempt, BlockedIP
 
 
 class LearningHtmlSanitizer(HTMLParser):
@@ -74,6 +75,21 @@ def is_admin():
     return session.get("is_admin", False)
 
 
+def request_ip():
+    """Return the client address supplied by the reverse proxy or direct request."""
+    return request.headers.get("X-Forwarded-For", request.remote_addr).split(",")[0].strip()
+
+
+@app.before_request
+def reject_blocked_ip():
+    """Block all site requests from an address blocked after failed sign-ins."""
+    if request.endpoint == "static":
+        return None
+    if BlockedIP.query.filter_by(ip=request_ip()).first():
+        return render_template("blocked.html"), 403
+    return None
+
+
 def csrf_token():
     if "csrf_token" not in session:
         session["csrf_token"] = secrets.token_urlsafe(32)
@@ -98,13 +114,24 @@ def admin_required(view):
 
 @app.context_processor
 def inject_template_values():
-    return {"is_admin": is_admin(), "csrf_token": csrf_token}
+    return {
+        "is_admin": is_admin(),
+        "csrf_token": csrf_token,
+        "describe_user_agent": describe_user_agent,
+    }
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
+        client_ip = request_ip()
         if check_password_hash(ADMIN_PASSWORD_HASH, request.form.get("password", "")):
+            db.session.add(LoginAttempt(
+                ip=client_ip,
+                user_agent=request.headers.get("User-Agent"),
+                success=True
+            ))
+            db.session.commit()
             session.clear()
             session["is_admin"] = True
             csrf_token()
@@ -112,6 +139,20 @@ def login():
             if next_url.startswith("/") and not next_url.startswith("//"):
                 return redirect(next_url)
             return redirect(url_for("home"))
+        db.session.add(LoginAttempt(
+            ip=client_ip,
+            user_agent=request.headers.get("User-Agent"),
+            success=False
+        ))
+        failed_attempts = LoginAttempt.query.filter_by(ip=client_ip, success=False).count()
+        if failed_attempts >= 5:
+            db.session.add(BlockedIP(
+                ip=client_ip,
+                reason="Five failed login attempts"
+            ))
+        db.session.commit()
+        if failed_attempts >= 5:
+            return render_template("blocked.html"), 403
         flash("Invalid password.")
 
     return render_template("login.html")
@@ -141,10 +182,7 @@ def mask_ip(value):
 @app.route("/")
 def home():
 
-    visitor_ip = request.headers.get(
-        "X-Forwarded-For",
-        request.remote_addr
-    ).split(",")[0].strip()
+    visitor_ip = request_ip()
 
     visitor = Visitor(
         ip=visitor_ip,
@@ -278,9 +316,6 @@ def test_db():
 
     return result
 
-from datetime import datetime, time, timedelta
-
-
 def describe_user_agent(user_agent):
     """Turn a browser's long User-Agent string into an admin-friendly summary."""
     agent = (user_agent or "").lower()
@@ -384,6 +419,30 @@ def visitor_logs():
         total_visitors=total_visitors,
         today_visitors=today_visitors
     )
+
+
+@app.route("/admin/login-attempts")
+@admin_required
+def login_attempt_logs():
+    attempts = LoginAttempt.query.order_by(LoginAttempt.attempted_at.desc()).limit(200).all()
+    blocked_ips = BlockedIP.query.order_by(BlockedIP.blocked_at.desc()).all()
+    return render_template(
+        "login_attempts.html",
+        attempts=attempts,
+        blocked_ips=blocked_ips,
+        failed_attempts=LoginAttempt.query.filter_by(success=False).count(),
+    )
+
+
+@app.route("/admin/blocked-ips/<int:blocked_ip_id>/unblock", methods=["POST"])
+@admin_required
+def unblock_ip(blocked_ip_id):
+    validate_csrf()
+    blocked_ip = BlockedIP.query.get_or_404(blocked_ip_id)
+    db.session.delete(blocked_ip)
+    db.session.commit()
+    flash("IP address unblocked.")
+    return redirect(url_for("login_attempt_logs"))
 
 @app.route("/write", methods=["GET", "POST"])
 @admin_required

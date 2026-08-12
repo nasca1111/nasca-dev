@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,7 +10,7 @@
   </head>
   <body>
     <main class="visitor-dashboard wrap">
-      <a class="board-back" href="{{ url_for('home') }}">← Portfolio home</a>
+      <div class="dashboard-links"><a class="board-back" href="{{ url_for('home') }}">← Portfolio home</a><a class="board-back" href="{{ url_for('login_attempt_logs') }}">Login security →</a></div>
       <header class="visitor-dashboard-header">
         <span class="sec-num">ADMIN / ACCESS LOG</span>
         <h1>Visitor Dashboard</h1>

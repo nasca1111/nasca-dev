@@ -68,3 +68,31 @@ class LearningEntry(db.Model):
         default=lambda: datetime.now(JST),
         onupdate=lambda: datetime.now(JST)
     )
+
+
+class LoginAttempt(db.Model):
+    __tablename__ = "login_attempts"
+
+    id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String(50), nullable=False, index=True)
+    user_agent = db.Column(db.String(300))
+    success = db.Column(db.Boolean, nullable=False, default=False)
+    attempted_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(JST),
+        nullable=False,
+        index=True
+    )
+
+
+class BlockedIP(db.Model):
+    __tablename__ = "blocked_ips"
+
+    id = db.Column(db.Integer, primary_key=True)
+    ip = db.Column(db.String(50), nullable=False, unique=True, index=True)
+    reason = db.Column(db.String(200), nullable=False)
+    blocked_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(JST),
+        nullable=False
+    )

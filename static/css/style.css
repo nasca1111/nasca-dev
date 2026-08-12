@@ -672,6 +672,7 @@ section {
 
 /* ---------- visitor dashboard ---------- */
 .visitor-dashboard { padding-top: 62px; padding-bottom: 80px; }
+.dashboard-links { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .visitor-dashboard-header { position: static; margin: 28px 0; background: transparent; border: 0; }
 .visitor-dashboard-header h1 { margin: 6px 0; }
 .visitor-dashboard-header p { color: var(--ink-faint); }
@@ -706,6 +707,12 @@ section {
 .visitor-client summary { color: var(--ink-faint); cursor: pointer; font: 10px var(--mono); }
 .visitor-client details code { display: block; max-height: 72px; overflow: auto; margin-top: 6px; padding: 7px; background: #171717; color: var(--ink-faint); font: 10px/1.45 var(--mono); overflow-wrap: anywhere; }
 .visitor-log-empty, .visitor-no-dates { padding: 20px; color: var(--ink-faint); font: 12px var(--mono); }
+.security-section { margin-top: 18px; }
+.security-section-title { padding: 14px 16px; border-bottom: 1px solid rgb(245 239 224 / 25%); color: var(--ink); font: 700 12px var(--mono); letter-spacing: .08em; }
+.security-blocked-head, .security-blocked-row { grid-template-columns: 1fr 1.3fr 1fr auto; }
+.security-attempt-head, .security-attempt-row { grid-template-columns: 1.3fr .7fr 1fr; }
+.security-blocked-row form { margin: 0; }
+.security-blocked-row .btn { padding: 8px 12px; }
 
 /* ---------- visitor log ---------- */
 .visitor-log {
@@ -1310,6 +1317,9 @@ footer p {
   .visitor-client {
     grid-column: 1 / -1;
   }
+  .security-blocked-head, .security-attempt-head { display: none; }
+  .security-blocked-row, .security-attempt-row { grid-template-columns: 1fr 1fr; }
+  .security-blocked-row form { grid-column: 1 / -1; }
   .learning-category-form {
     width: 100%;
   }

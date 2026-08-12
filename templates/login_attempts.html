@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Security</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <main class="visitor-dashboard wrap">
+      <a class="board-back" href="{{ url_for('visitor_logs') }}">← Visitor dashboard</a>
+      <header class="visitor-dashboard-header">
+        <span class="sec-num">ADMIN / ACCESS CONTROL</span>
+        <h1>Login Security</h1>
+        <p>Failed sign-ins are blocked automatically after five attempts from the same IP address.</p>
+      </header>
+
+      <section class="visitor-summary-grid">
+        <div class="visitor-summary-card"><span>BLOCKED IPS</span><strong>{{ blocked_ips|length }}</strong><small>currently blocked</small></div>
+        <div class="visitor-summary-card"><span>FAILED LOGINS</span><strong>{{ failed_attempts }}</strong><small>all recorded attempts</small></div>
+      </section>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}<p class="learning-flash">{{ messages[-1] }}</p>{% endif %}
+      {% endwith %}
+
+      <section class="visitor-table-card security-section">
+        <div class="security-section-title">BLOCKED IP ADDRESSES</div>
+        <div class="visitor-table-head security-blocked-head"><span>IP ADDRESS</span><span>REASON</span><span>BLOCKED AT</span><span>ACTION</span></div>
+        {% for blocked in blocked_ips %}
+        <article class="visitor-table-row security-blocked-row">
+          <code>{{ blocked.ip }}</code><span>{{ blocked.reason }}</span><time>{{ blocked.blocked_at.strftime('%Y.%m.%d %H:%M') }}</time>
+          <form method="POST" action="{{ url_for('unblock_ip', blocked_ip_id=blocked.id) }}" data-confirm="Unblock this IP address?">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <button class="btn btn-primary" type="submit">Unblock IP</button>
+          </form>
+        </article>
+        {% else %}<p class="visitor-log-empty">No IP addresses are currently blocked.</p>{% endfor %}
+      </section>
+
+      <section class="visitor-table-card security-section">
+        <div class="security-section-title">RECENT LOGIN ATTEMPTS</div>
+        <div class="visitor-table-head security-attempt-head"><span>TIME / IP</span><span>RESULT</span><span>CLIENT</span></div>
+        <div class="visitor-table-body">
+          {% for attempt in attempts %}
+          <article class="visitor-table-row security-attempt-row">
+            <div class="visitor-time-ip"><time>{{ attempt.attempted_at.strftime('%Y.%m.%d %H:%M:%S') }}</time><code>{{ attempt.ip }}</code></div>
+            <span class="visitor-type {% if attempt.success %}is-person{% else %}is-bot{% endif %}">{{ 'Success' if attempt.success else 'Failed' }}</span>
+            <div class="visitor-client"><strong>{{ describe_user_agent(attempt.user_agent).browser }}</strong><span>{{ describe_user_agent(attempt.user_agent).device }}</span></div>
+          </article>
+          {% else %}<p class="visitor-log-empty">No login attempts have been recorded.</p>{% endfor %}
+        </div>
+      </section>
+    </main>
+    <script src="/static/js/learningTabs.js"></script>
+  </body>
+</html>
