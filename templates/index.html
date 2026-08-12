@@ -46,7 +46,7 @@
             </div>
             {% if is_admin %}
             <div class="admin-actions">
-              <button class="btn btn-ghost" id="openWrite" type="button">Write Entry</button>
+              <button class="btn btn-ghost" id="openWrite" type="button">Login</button>
               <form action="{{ url_for('logout') }}" method="POST">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <button class="admin-logout" type="submit">Log out</button>
@@ -326,7 +326,7 @@
             <textarea name="content" placeholder="Write your entry" required></textarea>
           </label>
           <div class="modal-actions">
-            <button id="deletePost" class="btn btn-ghost" type="submit" form="deleteForm" hidden>Delete</button>
+            <button id="deletePost" class="btn btn-danger" type="submit" form="deleteForm" hidden>Delete</button>
             <button class="btn btn-ghost" type="submit">Save Entry →</button>
           </div>
         </form>

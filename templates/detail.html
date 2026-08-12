@@ -19,7 +19,7 @@
     <a href="/post/{{ post.id }}/edit"> Edit </a>
     <form action="/post/{{ post.id }}/delete" method="POST">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <button type="submit">Delete</button>
+      <button class="btn btn-danger" type="submit">Delete</button>
     </form>
     {% endif %}
   </body>

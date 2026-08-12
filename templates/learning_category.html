@@ -5,88 +5,170 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ category.name }} — Learning Log</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
   <body>
     <main class="learning-board-page wrap">
-      <a class="board-back" href="{{ url_for('home') }}#learning">← Learning Log</a>
+      <a class="board-back" href="{{ url_for('home') }}#learning"
+        >← Learning Log</a
+      >
       <header class="learning-board-header">
         <span class="sec-num">LEARNING CATEGORY</span>
         <h1>{{ category.name }}</h1>
-        <p>{{ entries|length }} learning entries</p>
+        <p>{{ entries|length }} Number of Learning Entries</p>
       </header>
 
-      {% with messages = get_flashed_messages() %}
-        {% if messages %}<p class="learning-flash">{{ messages[-1] }}</p>{% endif %}
-      {% endwith %}
-
-      {% if is_admin %}
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <p class="learning-flash">{{ messages[-1] }}</p>
+      {% endif %} {% endwith %} {% if is_admin %}
       <form class="learning-editor rich-editor-form" method="POST">
         <h2>New learning entry</h2>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <label>Title<input name="title" maxlength="200" required /></label>
-        <label>Content
+        <label
+          >Content
           <span class="rich-toolbar" aria-label="Text formatting">
-            <button type="button" data-command="bold" title="Bold"><b>B</b></button>
-            <button type="button" data-command="italic" title="Italic"><i>I</i></button>
-            <button type="button" data-command="underline" title="Underline"><u>U</u></button>
-            <label class="rich-color" title="Text color">Color <input type="color" value="#f5efe0" /></label>
+            <button type="button" data-command="bold" title="Bold">
+              <b>B</b>
+            </button>
+            <button type="button" data-command="italic" title="Italic">
+              <i>I</i>
+            </button>
+            <button type="button" data-command="underline" title="Underline">
+              <u>U</u>
+            </button>
+            <label class="rich-color" title="Text color"
+              >Color <input type="color" value="#f5efe0"
+            /></label>
           </span>
-          <div class="rich-editor" contenteditable="true" data-placeholder="Write your entry"></div>
-          <input class="rich-editor-value" type="hidden" name="content" required />
+          <div
+            class="rich-editor"
+            contenteditable="true"
+            data-placeholder="Write your entry"
+          ></div>
+          <input
+            class="rich-editor-value"
+            type="hidden"
+            name="content"
+            required
+          />
         </label>
         <button class="btn btn-primary" type="submit">Save entry →</button>
       </form>
-      {% endif %}
-
-      {% if entries %}
-      <div class="learning-entry-tabs" role="tablist" aria-label="{{ category.name }} entries">
+      {% endif %} {% if entries %}
+      <div
+        class="learning-entry-tabs"
+        role="tablist"
+        aria-label="{{ category.name }} entries"
+      >
         {% for entry in entries %}
-        <button class="learning-tab{% if loop.first %} is-active{% endif %}" type="button" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="entry-{{ entry.id }}" data-tab-target="entry-{{ entry.id }}">{{ entry.title }}</button>
+        <button
+          class="learning-tab{% if loop.first %} is-active{% endif %}"
+          type="button"
+          role="tab"
+          aria-selected="{{ 'true' if loop.first else 'false' }}"
+          aria-controls="entry-{{ entry.id }}"
+          data-tab-target="entry-{{ entry.id }}"
+        >
+          {{ entry.title }}
+        </button>
         {% endfor %}
       </div>
       <section class="learning-board-list">
         {% for entry in entries %}
-        <article class="learning-board-entry learning-entry-panel{% if loop.first %} is-active{% endif %}" id="entry-{{ entry.id }}" role="tabpanel">
-          <div class="learning-board-entry-meta">{{ entry.created_at.strftime('%Y.%m.%d %H:%M') }}</div>
+        <article
+          class="learning-board-entry learning-entry-panel{% if loop.first %} is-active{% endif %}"
+          id="entry-{{ entry.id }}"
+          role="tabpanel"
+        >
+          <div class="learning-board-entry-meta">
+            {{ entry.created_at.strftime('%Y.%m.%d %H:%M') }}
+          </div>
           <h2>{{ entry.title }}</h2>
-          <div class="learning-entry-content">{{ entry.content|learning_html }}</div>
+          <div class="learning-entry-content">
+            {{ entry.content|learning_html }}
+          </div>
           {% if is_admin %}
           <details class="learning-edit-details">
-            <summary class="btn btn-ghost">Edit Entry</summary>
-            <form method="POST" action="{{ url_for('edit_learning_entry', entry_id=entry.id) }}" class="learning-editor compact rich-editor-form" data-confirm="Save the changes to this learning entry?">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              <label>Title<input name="title" value="{{ entry.title }}" maxlength="200" required /></label>
-              <label>Content
+            <summary class="btn btn-primary">Edit entry</summary>
+            <form
+              method="POST"
+              action="{{ url_for('edit_learning_entry', entry_id=entry.id) }}"
+              class="learning-editor compact rich-editor-form"
+            >
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <label
+                >Title<input
+                  name="title"
+                  value="{{ entry.title }}"
+                  maxlength="200"
+                  required
+              /></label>
+              <label
+                >Content
                 <span class="rich-toolbar" aria-label="Text formatting">
-                  <button type="button" data-command="bold" title="Bold"><b>B</b></button>
-                  <button type="button" data-command="italic" title="Italic"><i>I</i></button>
-                  <button type="button" data-command="underline" title="Underline"><u>U</u></button>
-                  <label class="rich-color" title="Text color">Color <input type="color" value="#f5efe0" /></label>
+                  <button type="button" data-command="bold" title="Bold">
+                    <b>B</b>
+                  </button>
+                  <button type="button" data-command="italic" title="Italic">
+                    <i>I</i>
+                  </button>
+                  <button
+                    type="button"
+                    data-command="underline"
+                    title="Underline"
+                  >
+                    <u>U</u>
+                  </button>
+                  <label class="rich-color" title="Text color"
+                    >Color <input type="color" value="#f5efe0"
+                  /></label>
                 </span>
-                <div class="rich-editor" contenteditable="true">{{ entry.content|learning_html }}</div>
-                <input class="rich-editor-value" type="hidden" name="content" required />
+                <div class="rich-editor" contenteditable="true">
+                  {{ entry.content|learning_html }}
+                </div>
+                <input
+                  class="rich-editor-value"
+                  type="hidden"
+                  name="content"
+                  required
+                />
               </label>
-              <button class="btn btn-primary" type="submit">Update Entry →</button>
+              <button class="btn btn-ghost" type="submit">Update</button>
             </form>
           </details>
-          <form method="POST" action="{{ url_for('delete_learning_entry', entry_id=entry.id) }}" class="learning-delete-form" data-confirm="Delete this learning entry? This action cannot be undone.">
+          <form
+            method="POST"
+            action="{{ url_for('delete_learning_entry', entry_id=entry.id) }}"
+            class="learning-delete-form"
+          >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <button class="btn btn-danger" type="submit">Delete Entry</button>
+            <button type="submit">Delete</button>
           </form>
           {% endif %}
         </article>
         {% endfor %}
       </section>
       {% else %}
-      <p class="learning-empty-state">There are no learning entries in this category.</p>
-      {% endif %}
-
-      {% if is_admin %}
-      <form method="POST" action="{{ url_for('delete_learning_category', category_id=category.id) }}" class="learning-delete-category" data-confirm="Delete this category and all of its learning entries? This action cannot be undone.">
+      <p class="learning-empty-state">
+        No content available for this category yet.
+      </p>
+      {% endif %} {% if is_admin %}
+      <form
+        method="POST"
+        action="{{ url_for('delete_learning_category', category_id=category.id) }}"
+        class="learning-delete-category"
+      >
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <button class="btn btn-danger" type="submit">Delete Category</button>
+        <button type="submit">Delete this category</button>
       </form>
       {% endif %}
     </main>
