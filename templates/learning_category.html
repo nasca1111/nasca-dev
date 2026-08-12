@@ -14,7 +14,7 @@
       <header class="learning-board-header">
         <span class="sec-num">LEARNING CATEGORY</span>
         <h1>{{ category.name }}</h1>
-        <p>{{ entries|length }}개의 학습 기록</p>
+        <p>{{ entries|length }} learning entries</p>
       </header>
 
       {% with messages = get_flashed_messages() %}
@@ -54,8 +54,8 @@
           <div class="learning-entry-content">{{ entry.content|learning_html }}</div>
           {% if is_admin %}
           <details class="learning-edit-details">
-            <summary>Edit entry</summary>
-            <form method="POST" action="{{ url_for('edit_learning_entry', entry_id=entry.id) }}" class="learning-editor compact rich-editor-form">
+            <summary class="btn btn-ghost">Edit Entry</summary>
+            <form method="POST" action="{{ url_for('edit_learning_entry', entry_id=entry.id) }}" class="learning-editor compact rich-editor-form" data-confirm="Save the changes to this learning entry?">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
               <label>Title<input name="title" value="{{ entry.title }}" maxlength="200" required /></label>
               <label>Content
@@ -68,25 +68,25 @@
                 <div class="rich-editor" contenteditable="true">{{ entry.content|learning_html }}</div>
                 <input class="rich-editor-value" type="hidden" name="content" required />
               </label>
-              <button class="btn btn-ghost" type="submit">Update</button>
+              <button class="btn btn-primary" type="submit">Update Entry →</button>
             </form>
           </details>
-          <form method="POST" action="{{ url_for('delete_learning_entry', entry_id=entry.id) }}" class="learning-delete-form">
+          <form method="POST" action="{{ url_for('delete_learning_entry', entry_id=entry.id) }}" class="learning-delete-form" data-confirm="Delete this learning entry? This action cannot be undone.">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <button type="submit">Delete</button>
+            <button class="btn btn-danger" type="submit">Delete Entry</button>
           </form>
           {% endif %}
         </article>
         {% endfor %}
       </section>
       {% else %}
-      <p class="learning-empty-state">이 카테고리에 작성된 학습 내용이 없습니다.</p>
+      <p class="learning-empty-state">There are no learning entries in this category.</p>
       {% endif %}
 
       {% if is_admin %}
-      <form method="POST" action="{{ url_for('delete_learning_category', category_id=category.id) }}" class="learning-delete-category">
+      <form method="POST" action="{{ url_for('delete_learning_category', category_id=category.id) }}" class="learning-delete-category" data-confirm="Delete this category and all of its learning entries? This action cannot be undone.">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <button type="submit">Delete this category</button>
+        <button class="btn btn-danger" type="submit">Delete Category</button>
       </form>
       {% endif %}
     </main>

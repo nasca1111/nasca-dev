@@ -223,6 +223,15 @@ h1 {
   background: var(--ink);
   color: var(--black);
 }
+.btn-danger {
+  border: 1px solid var(--alert);
+  background: var(--black);
+  color: var(--alert);
+}
+.btn-danger:hover {
+  background: var(--alert);
+  color: var(--black);
+}
 
 .admin-actions {
   display: flex;
@@ -656,10 +665,10 @@ section {
 .rich-editor { min-height: 150px; border: 1px solid rgb(245 239 224 / 35%); background: #171717; color: var(--ink); padding: 10px 12px; font: 14px/1.6 var(--sans); white-space: pre-wrap; }
 .rich-editor:empty::before { content: attr(data-placeholder); color: var(--ink-faint); }
 .learning-edit-details { margin-top: 18px; color: var(--ink-faint); font: 11px var(--mono); }
-.learning-edit-details summary { cursor: pointer; }
+.learning-edit-details summary { cursor: pointer; list-style: none; }
+.learning-edit-details summary::-webkit-details-marker { display: none; }
 .learning-editor.compact { margin: 10px 0 0; padding: 14px; }
 .learning-delete-form, .learning-delete-category { margin-top: 12px; }
-.learning-delete-form button, .learning-delete-category button { border: 0; background: transparent; color: var(--alert); cursor: pointer; font: 11px var(--mono); text-decoration: underline; }
 
 /* ---------- visitor dashboard ---------- */
 .visitor-dashboard { padding-top: 62px; padding-bottom: 80px; }

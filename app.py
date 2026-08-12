@@ -13,7 +13,7 @@ from werkzeug.security import check_password_hash
 from extensions import db
 
 app = Flask(__name__)
-#디비 주소변경
+# Database configuration
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "change-this-secret-key-before-production")
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 

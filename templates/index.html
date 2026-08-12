@@ -151,11 +151,11 @@
           <form class="learning-category-form" action="{{ url_for('create_learning_category') }}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input name="name" maxlength="80" placeholder="New category name" required />
-            <button class="btn btn-ghost" type="submit">Add category</button>
+            <button class="btn btn-primary" type="submit">Add Category →</button>
           </form>
           {% endif %}
         </div>
-        <p class="learning-intro">학습 분야를 선택하면 게시판에서 학습 기록을 작성하고 관리할 수 있습니다.</p>
+        <p class="learning-intro">Select a learning category to write and manage your study notes.</p>
         <div class="learning-tabs" role="tablist" aria-label="Learning categories">
           {% for category in learning_categories %}
           <button class="learning-tab{% if loop.first %} is-active{% endif %}" type="button" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" aria-controls="learning-category-{{ category.id }}" data-tab-target="learning-category-{{ category.id }}">{{ category.name }}</button>
@@ -175,13 +175,13 @@
                 <span class="learning-entry-title">{{ entry.title }}</span>
               </a>
               {% else %}
-              <p class="learning-empty">아직 작성된 학습 내용이 없습니다.</p>
+              <p class="learning-empty">No learning entries yet.</p>
               {% endfor %}
             </div>
             <a class="learning-open-link" href="{{ url_for('learning_category', category_id=category.id) }}">Open board →</a>
           </article>
           {% else %}
-          <div class="learning-empty-state">아직 학습 카테고리가 없습니다.{% if is_admin %} 위에서 첫 카테고리를 만들어 보세요.{% endif %}</div>
+          <div class="learning-empty-state">No learning categories yet.{% if is_admin %} Create your first category above.{% endif %}</div>
           {% endfor %}
         </div>
       </section>

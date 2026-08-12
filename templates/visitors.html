@@ -14,7 +14,7 @@
       <header class="visitor-dashboard-header">
         <span class="sec-num">ADMIN / ACCESS LOG</span>
         <h1>Visitor Dashboard</h1>
-        <p>날짜별 접속 기록과 클라이언트 유형을 확인합니다.</p>
+        <p>Review access logs and client types by date.</p>
       </header>
 
       <section class="visitor-summary-grid" aria-label="Visitor summary">
@@ -54,7 +54,7 @@
             <div class="visitor-client"><strong>{{ client.browser }}</strong><span>{{ client.device }}</span><details><summary>Raw user agent</summary><code>{{ client.raw }}</code></details></div>
           </article>
           {% else %}
-          <p class="visitor-log-empty">{{ selected_date }}에는 접속 기록이 없습니다.</p>
+          <p class="visitor-log-empty">There are no access logs for {{ selected_date }}.</p>
           {% endfor %}
         </div>
       </section>
