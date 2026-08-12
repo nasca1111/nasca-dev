@@ -689,13 +689,6 @@ section {
 .learning-entry-navigation { display: grid; gap: 10px; margin-bottom: 14px; padding: 12px; border: 1px solid rgb(245 239 224 / 24%); background: rgb(0 0 0 / 16%); }
 .entry-jump-label { display: flex; align-items: center; gap: 10px; color: var(--ink-faint); font: 10px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
 .entry-jump-select { min-width: 0; max-width: 440px; flex: 1; border: 1px solid rgb(245 239 224 / 35%); background: #111214; color: var(--ink); padding: 8px 10px; font: 12px var(--mono); }
-.entry-tab-controls { display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px; gap: 8px; align-items: center; }
-.learning-entry-tabs { margin: 0; scroll-behavior: smooth; scrollbar-width: thin; }
-.learning-entry-tabs .learning-tab { max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.entry-tab-number { display: inline-block; margin-right: 7px; color: var(--ink-faint); font-size: 10px; }
-.learning-entry-tabs .learning-tab.is-active .entry-tab-number { color: var(--black); }
-.entry-tab-arrow { height: 34px; border: 1px solid rgb(245 239 224 / 35%); background: #111214; color: var(--ink); cursor: pointer; font: 17px var(--mono); }
-.entry-tab-arrow:hover, .entry-tab-arrow:focus-visible { border-color: var(--ink); background: var(--ink); color: var(--black); }
 .learning-board-list { display: block; }
 .learning-board-entry { border: 1px solid rgb(245 239 224 / 30%); padding: 20px; }
 .learning-board-entry-meta { color: var(--ink-faint); font: 11px var(--mono); }
