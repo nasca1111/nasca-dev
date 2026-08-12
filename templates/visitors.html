@@ -1,35 +1,63 @@
 <!doctype html>
-<html>
+<html lang="ko">
   <head>
-    <title>Visitor Logs</title>
-    <h1>Visitor Dashboard</h1>
-
-    <h2>Visitors Today: {{ today_visitors }}</h2>
-
-    <h2>Total Visitors: {{ total_visitors }}</h2>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visitor Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/style.css" />
   </head>
-
   <body>
-    <h1>Visitor Logs</h1>
+    <main class="visitor-dashboard wrap">
+      <a class="board-back" href="{{ url_for('home') }}">← Portfolio home</a>
+      <header class="visitor-dashboard-header">
+        <span class="sec-num">ADMIN / ACCESS LOG</span>
+        <h1>Visitor Dashboard</h1>
+        <p>날짜별 접속 기록과 클라이언트 유형을 확인합니다.</p>
+      </header>
 
-    <table border="1">
-      <tr>
-        <th>ID</th>
-        <th>IP</th>
-        <th>Page</th>
-        <th>User Agent</th>
-        <th>Time</th>
-      </tr>
+      <section class="visitor-summary-grid" aria-label="Visitor summary">
+        <div class="visitor-summary-card"><span>TODAY</span><strong>{{ today_visitors }}</strong><small>today's visits</small></div>
+        <div class="visitor-summary-card"><span>SELECTED DAY</span><strong>{{ selected_total }}</strong><small>{{ selected_date }}</small></div>
+        <div class="visitor-summary-card"><span>BOTS</span><strong>{{ selected_bots }}</strong><small>on selected day</small></div>
+        <div class="visitor-summary-card"><span>ALL TIME</span><strong>{{ total_visitors }}</strong><small>total visits</small></div>
+      </section>
 
-      {% for visitor in visitors %}
-      <tr>
-        <td>{{ visitor.id }}</td>
-        <td>{{ visitor.ip }}</td>
-        <td>{{ visitor.page }}</td>
-        <td>{{ visitor.user_agent }}</td>
-        <td>{{ visitor.visited_at }}</td>
-      </tr>
-      {% endfor %}
-    </table>
+      <section class="visitor-filter-card">
+        <form method="GET" class="visitor-date-form">
+          <label for="visitorDate">DATE</label>
+          <input id="visitorDate" type="date" name="date" value="{{ selected_date }}" list="visitDates" />
+          <datalist id="visitDates">
+            {% for date in available_dates %}<option value="{{ date }}"></option>{% endfor %}
+          </datalist>
+          <button class="btn btn-primary" type="submit">View log →</button>
+        </form>
+        <div class="visitor-date-tabs" aria-label="Dates with visit logs">
+          {% for date in available_dates %}
+          <a class="learning-tab{% if date == selected_date %} is-active{% endif %}" href="{{ url_for('visitor_logs', date=date) }}">{{ date }}</a>
+          {% else %}<span class="visitor-no-dates">No logs yet</span>{% endfor %}
+        </div>
+      </section>
+
+      <section class="visitor-table-card">
+        <div class="visitor-table-head">
+          <span>TIME / IP</span><span>PAGE</span><span>VISITOR TYPE</span><span>CLIENT</span>
+        </div>
+        <div class="visitor-table-body">
+          {% for log in visitor_logs %}
+          {% set visitor = log.visitor %}{% set client = log.client %}
+          <article class="visitor-table-row">
+            <div class="visitor-time-ip"><time>{{ visitor.visited_at.strftime('%H:%M:%S') }}</time><code>{{ visitor.ip }}</code></div>
+            <div class="visitor-page">{{ visitor.page }}</div>
+            <div><span class="visitor-type {% if client.type == 'Bot' %}is-bot{% else %}is-person{% endif %}">{{ client.type }}</span><small>{{ client.name }}</small></div>
+            <div class="visitor-client"><strong>{{ client.browser }}</strong><span>{{ client.device }}</span><details><summary>Raw user agent</summary><code>{{ client.raw }}</code></details></div>
+          </article>
+          {% else %}
+          <p class="visitor-log-empty">{{ selected_date }}에는 접속 기록이 없습니다.</p>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
   </body>
 </html>

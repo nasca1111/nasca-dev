@@ -278,29 +278,109 @@ def test_db():
 
     return result
 
-from datetime import datetime
+from datetime import datetime, time, timedelta
+
+
+def describe_user_agent(user_agent):
+    """Turn a browser's long User-Agent string into an admin-friendly summary."""
+    agent = (user_agent or "").lower()
+    bot_markers = {
+        "googlebot": "Googlebot",
+        "bingbot": "Bingbot",
+        "yandexbot": "YandexBot",
+        "baiduspider": "Baidu Spider",
+        "facebookexternalhit": "Facebook Crawler",
+        "twitterbot": "Twitterbot",
+        "slackbot": "Slackbot",
+        "discordbot": "Discordbot",
+        "crawler": "Web Crawler",
+        "spider": "Web Spider",
+        "bot": "Automated Bot",
+    }
+    bot_name = next((name for marker, name in bot_markers.items() if marker in agent), None)
+
+    if "edg/" in agent:
+        browser = "Microsoft Edge"
+    elif "opr/" in agent or "opera" in agent:
+        browser = "Opera"
+    elif "firefox/" in agent:
+        browser = "Firefox"
+    elif "chrome/" in agent or "crios/" in agent:
+        browser = "Chrome"
+    elif "safari/" in agent:
+        browser = "Safari"
+    elif bot_name:
+        browser = bot_name
+    else:
+        browser = "Unknown client"
+
+    if "iphone" in agent:
+        device = "iPhone"
+    elif "ipad" in agent:
+        device = "iPad"
+    elif "android" in agent and "mobile" in agent:
+        device = "Android phone"
+    elif "android" in agent:
+        device = "Android tablet"
+    elif "windows" in agent:
+        device = "Windows"
+    elif "mac os" in agent or "macintosh" in agent:
+        device = "macOS"
+    elif "linux" in agent:
+        device = "Linux"
+    else:
+        device = "Unknown device"
+
+    return {
+        "type": "Bot" if bot_name else "Person",
+        "name": bot_name or "Likely human visitor",
+        "browser": browser,
+        "device": device,
+        "raw": user_agent or "No User-Agent provided",
+    }
 
 
 @app.route("/admin/visitors")
 @admin_required
 def visitor_logs():
+    selected_date = request.args.get("date", "").strip()
+    try:
+        selected_day = datetime.strptime(selected_date, "%Y-%m-%d").date() if selected_date else datetime.now().date()
+    except ValueError:
+        selected_day = datetime.now().date()
 
-    visitors = Visitor.query.order_by(
-        Visitor.visited_at.desc()
-    ).all()
-
+    start = datetime.combine(selected_day, time.min)
+    end = start + timedelta(days=1)
+    visitors = (Visitor.query
+        .filter(Visitor.visited_at >= start, Visitor.visited_at < end)
+        .order_by(Visitor.visited_at.desc())
+        .all())
+    visitor_logs = [
+        {"visitor": visitor, "client": describe_user_agent(visitor.user_agent)}
+        for visitor in visitors
+    ]
+    available_dates = [
+        row[0] for row in db.session.query(db.func.date(Visitor.visited_at))
+        .distinct()
+        .order_by(db.func.date(Visitor.visited_at).desc())
+        .all()
+        if row[0]
+    ]
     total_visitors = Visitor.query.count()
-
     today = datetime.now().date()
-
     today_visitors = Visitor.query.filter(
-        db.func.date(Visitor.visited_at) == today
+        Visitor.visited_at >= datetime.combine(today, time.min),
+        Visitor.visited_at < datetime.combine(today + timedelta(days=1), time.min)
     ).count()
-
+    bot_visitors = sum(log["client"]["type"] == "Bot" for log in visitor_logs)
 
     return render_template(
         "visitors.html",
-        visitors=visitors,
+        visitor_logs=visitor_logs,
+        selected_date=selected_day.isoformat(),
+        available_dates=available_dates,
+        selected_total=len(visitor_logs),
+        selected_bots=bot_visitors,
         total_visitors=total_visitors,
         today_visitors=today_visitors
     )
