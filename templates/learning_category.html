@@ -99,6 +99,7 @@
               method="POST"
               action="{{ url_for('edit_learning_entry', entry_id=entry.id) }}"
               class="learning-editor compact rich-editor-form"
+              data-confirm="Save the changes to this learning entry?"
             >
               <input
                 type="hidden"
@@ -142,16 +143,19 @@
                   required
                 />
               </label>
-              <button class="btn btn-ghost" type="submit">Update</button>
+              <button class="btn btn-primary" type="submit">
+                Update Entry →
+              </button>
             </form>
           </details>
           <form
             method="POST"
             action="{{ url_for('delete_learning_entry', entry_id=entry.id) }}"
             class="learning-delete-form"
+            data-confirm="Delete this learning entry? This action cannot be undone."
           >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <button type="submit">Delete</button>
+            <button class="btn btn-danger" type="submit">Delete Entry</button>
           </form>
           {% endif %}
         </article>
@@ -166,9 +170,10 @@
         method="POST"
         action="{{ url_for('delete_learning_category', category_id=category.id) }}"
         class="learning-delete-category"
+        data-confirm="Delete this category and all of its learning entries? This action cannot be undone."
       >
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <button type="submit">Delete this category</button>
+        <button class="btn btn-danger" type="submit">Delete Category</button>
       </form>
       {% endif %}
     </main>

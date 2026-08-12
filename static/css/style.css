@@ -231,14 +231,16 @@ h1 {
   background: var(--ink);
   color: var(--black);
 }
-.btn-danger {
-  border: 1px solid var(--alert);
-  background: var(--black);
-  color: var(--alert);
+.btn.btn-danger {
+  border: 1px solid var(--alert) !important;
+  background: #000 !important;
+  color: var(--alert) !important;
 }
-.btn-danger:hover {
-  background: var(--alert);
-  color: var(--black);
+.btn.btn-danger:hover,
+.btn.btn-danger:focus-visible {
+  background: #260000 !important;
+  color: #ff4d4d !important;
+  box-shadow: 0 0 0 2px rgb(255 0 0 / 20%);
 }
 
 .admin-actions {
