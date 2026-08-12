@@ -23,7 +23,7 @@ ADMIN_PASSWORD_HASH = "scrypt:32768:8:1$AZoWWcB3tzxYAVCu$63fafb5009397187f33e0a3
 
 db.init_app(app)
 
-from models import Visitor, Post
+from models import Visitor, Post, LearningCategory, LearningEntry
 
 
 def is_admin():
@@ -114,6 +114,7 @@ def home():
     db.session.commit()
 
     posts = Post.query.order_by(Post.created_at.desc()).all()
+    learning_categories = LearningCategory.query.order_by(LearningCategory.name).all()
     recent_visitors = (
         Visitor.query
         .filter(Visitor.ip.notlike("%:%"))
@@ -131,9 +132,87 @@ def home():
     return render_template(
         "index.html",
         posts=posts,
+        learning_categories=learning_categories,
         today_visitors=today_visitors,
         total_visitors=total_visitors
     )
+
+
+@app.route("/learning/categories", methods=["POST"])
+@admin_required
+def create_learning_category():
+    validate_csrf()
+    name = request.form.get("name", "").strip()
+    if not name:
+        flash("Category name is required.")
+    elif len(name) > 80:
+        flash("Category name must be 80 characters or fewer.")
+    elif LearningCategory.query.filter_by(name=name).first():
+        flash("That category already exists.")
+    else:
+        db.session.add(LearningCategory(name=name))
+        db.session.commit()
+    return redirect(url_for("home") + "#learning")
+
+
+@app.route("/learning/category/<int:category_id>", methods=["GET", "POST"])
+def learning_category(category_id):
+    category = LearningCategory.query.get_or_404(category_id)
+
+    if request.method == "POST":
+        if not is_admin():
+            return redirect(url_for("login", next=request.path))
+        validate_csrf()
+        title = request.form.get("title", "").strip()
+        content = request.form.get("content", "").strip()
+        if not title or not content:
+            flash("Title and content are required.")
+        else:
+            db.session.add(LearningEntry(category=category, title=title, content=content))
+            db.session.commit()
+            return redirect(url_for("learning_category", category_id=category.id))
+
+    entries = LearningEntry.query.filter_by(category_id=category.id).order_by(
+        LearningEntry.created_at.desc()
+    ).all()
+    return render_template("learning_category.html", category=category, entries=entries)
+
+
+@app.route("/learning/entry/<int:entry_id>/edit", methods=["POST"])
+@admin_required
+def edit_learning_entry(entry_id):
+    validate_csrf()
+    entry = LearningEntry.query.get_or_404(entry_id)
+    title = request.form.get("title", "").strip()
+    content = request.form.get("content", "").strip()
+    if title and content:
+        entry.title = title
+        entry.content = content
+        db.session.commit()
+    else:
+        flash("Title and content are required.")
+    return redirect(url_for("learning_category", category_id=entry.category_id))
+
+
+@app.route("/learning/entry/<int:entry_id>/delete", methods=["POST"])
+@admin_required
+def delete_learning_entry(entry_id):
+    validate_csrf()
+    entry = LearningEntry.query.get_or_404(entry_id)
+    category_id = entry.category_id
+    db.session.delete(entry)
+    db.session.commit()
+    return redirect(url_for("learning_category", category_id=category_id))
+
+
+@app.route("/learning/category/<int:category_id>/delete", methods=["POST"])
+@admin_required
+def delete_learning_category(category_id):
+    validate_csrf()
+    category = LearningCategory.query.get_or_404(category_id)
+    db.session.delete(category)
+    db.session.commit()
+    return redirect(url_for("home") + "#learning")
 
 @app.route("/test-db")
 @admin_required

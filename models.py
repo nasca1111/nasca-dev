@@ -29,3 +29,42 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"<Post {self.title}>"
+
+
+class LearningCategory(db.Model):
+    __tablename__ = "learning_categories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False, unique=True)
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(JST)
+    )
+    entries = db.relationship(
+        "LearningEntry",
+        backref="category",
+        cascade="all, delete-orphan",
+        lazy=True
+    )
+
+
+class LearningEntry(db.Model):
+    __tablename__ = "learning_entries"
+
+    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(
+        db.Integer,
+        db.ForeignKey("learning_categories.id"),
+        nullable=False
+    )
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(JST)
+    )
+    updated_at = db.Column(
+        db.DateTime,
+        default=lambda: datetime.now(JST),
+        onupdate=lambda: datetime.now(JST)
+    )

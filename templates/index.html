@@ -22,6 +22,7 @@
             <li><a href="#scope">Capabilities</a></li>
             <li><a href="#findings">Project</a></li>
             <li><a href="#appendix">Certifications/Education</a></li>
+            <li><a href="#learning">Learning</a></li>
           </ul>
         </nav>
       </div>
@@ -36,6 +37,12 @@
             <h1>Nasca</h1>
             <div class="role">
               Undergraduate student in computer engineering
+            </div>
+            <div class="sec-head">
+              <span class="sec-desc">              
+                This site is a personal website created for a
+                <strong>portfolio</strong>. I plan to update it by listing my personal
+                projects and abilities.</span>
             </div>
             {% if is_admin %}
             <div class="admin-actions">
@@ -133,6 +140,46 @@
           </div>
         </div>
       </section>
+
+      <section id="learning">
+        <div class="sec-head learning-head">
+          <div>
+            <span class="sec-num">§1-A</span>
+            <span class="sec-title">Learning Log</span>
+          </div>
+          {% if is_admin %}
+          <form class="learning-category-form" action="{{ url_for('create_learning_category') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input name="name" maxlength="80" placeholder="New category name" required />
+            <button class="btn btn-ghost" type="submit">Add category</button>
+          </form>
+          {% endif %}
+        </div>
+        <p class="learning-intro">학습 분야를 선택하면 게시판에서 학습 기록을 작성하고 관리할 수 있습니다.</p>
+        <div class="learning-category-grid reveal">
+          {% for category in learning_categories %}
+          <article class="learning-category-card">
+            <div class="learning-category-title-row">
+              <a href="{{ url_for('learning_category', category_id=category.id) }}" class="learning-category-title">{{ category.name }}</a>
+              <span>{{ category.entries|length }} POSTS</span>
+            </div>
+            <div class="learning-entry-list" aria-label="{{ category.name }} recent entries">
+              {% for entry in category.entries|sort(attribute='created_at', reverse=true) %}
+              <a class="learning-entry-preview" href="{{ url_for('learning_category', category_id=category.id) }}#entry-{{ entry.id }}">
+                <span class="learning-entry-date">{{ entry.created_at.strftime('%Y.%m.%d') }}</span>
+                <span class="learning-entry-title">{{ entry.title }}</span>
+              </a>
+              {% else %}
+              <p class="learning-empty">아직 작성된 학습 내용이 없습니다.</p>
+              {% endfor %}
+            </div>
+            <a class="learning-open-link" href="{{ url_for('learning_category', category_id=category.id) }}">Open board →</a>
+          </article>
+          {% else %}
+          <div class="learning-empty-state">아직 학습 카테고리가 없습니다.{% if is_admin %} 위에서 첫 카테고리를 만들어 보세요.{% endif %}</div>
+          {% endfor %}
+        </div>
+      </section>
       
       <section id="syslog">
         <div class="file-card">
@@ -143,16 +190,6 @@
 
       </section>
 
-      <section id="about">
-        <div class="sec-head">
-          <span class="sec-num">§1</span><span class="sec-title">Purpose</span>
-        </div>
-        <p class="about-body reveal">
-          This site is a personal website created for a
-          <strong>portfolio</strong>. I plan to update it by listing my personal
-          projects and abilities.
-        </p>
-      </section>
 
       <section id="scope">
         <div class="sec-head">

@@ -604,6 +604,50 @@ section {
   text-align: right;
 }
 
+/* ---------- learning log ---------- */
+.learning-head { justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+.learning-category-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.learning-category-form input, .learning-editor input, .learning-editor textarea {
+  border: 1px solid rgb(245 239 224 / 35%); background: #171717; color: var(--ink); padding: 10px 12px; font: inherit;
+}
+.learning-category-form input { min-width: 210px; }
+.learning-category-form .btn { padding: 10px 14px; }
+.learning-intro { color: var(--ink-faint); font-size: 14px; margin: -18px 0 22px; }
+.learning-category-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.learning-category-card { border: 1px solid rgb(245 239 224 / 30%); background: rgb(0 0 0 / 20%); padding: 18px; }
+.learning-category-title-row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; margin-bottom: 12px; }
+.learning-category-title { color: var(--ink); font-family: var(--mono); font-size: 16px; font-weight: 700; text-decoration: none; }
+.learning-category-title:hover, .learning-open-link:hover { color: var(--clearance); text-decoration: underline; }
+.learning-category-title-row span, .learning-entry-date, .learning-open-link { color: var(--ink-faint); font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; }
+.learning-entry-list { height: 206px; overflow-y: auto; border-top: 1px dashed rgb(245 239 224 / 30%); scrollbar-color: var(--ink-faint) var(--black); scrollbar-width: thin; }
+.learning-entry-preview { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 10px; padding: 10px 0; border-bottom: 1px dashed rgb(245 239 224 / 20%); color: var(--ink-soft); text-decoration: none; font-size: 13px; }
+.learning-entry-preview:hover { color: var(--clearance); }
+.learning-entry-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.learning-empty { color: var(--ink-faint); font-size: 13px; padding: 14px 0; }
+.learning-open-link { display: block; margin-top: 14px; text-align: right; text-decoration: none; }
+.learning-empty-state { padding: 22px; border: 1px dashed rgb(245 239 224 / 35%); color: var(--ink-faint); font-size: 14px; }
+.learning-board-page { padding-top: 62px; padding-bottom: 80px; }
+.board-back { color: var(--ink-faint); font-family: var(--mono); font-size: 12px; text-decoration: none; }
+.learning-board-header { position: static; margin: 28px 0; background: transparent; border: 0; }
+.learning-board-header h1 { margin: 6px 0; }
+.learning-board-header p, .learning-flash { color: var(--ink-faint); }
+.learning-flash { border: 1px solid var(--alert); padding: 10px; margin-bottom: 16px; }
+.learning-editor { display: grid; gap: 12px; padding: 20px; border: 1px solid rgb(245 239 224 / 30%); margin-bottom: 28px; }
+.learning-editor h2 { font: 700 15px var(--mono); }
+.learning-editor label { display: grid; gap: 6px; color: var(--ink-faint); font: 11px var(--mono); }
+.learning-editor textarea { min-height: 150px; resize: vertical; }
+.learning-editor .btn { justify-self: start; }
+.learning-board-list { display: grid; gap: 14px; }
+.learning-board-entry { border: 1px solid rgb(245 239 224 / 30%); padding: 20px; }
+.learning-board-entry-meta { color: var(--ink-faint); font: 11px var(--mono); }
+.learning-board-entry h2 { margin: 5px 0 12px; font-size: 19px; }
+.learning-board-entry > p { white-space: pre-wrap; color: var(--ink-soft); }
+.learning-edit-details { margin-top: 18px; color: var(--ink-faint); font: 11px var(--mono); }
+.learning-edit-details summary { cursor: pointer; }
+.learning-editor.compact { margin: 10px 0 0; padding: 14px; }
+.learning-delete-form, .learning-delete-category { margin-top: 12px; }
+.learning-delete-form button, .learning-delete-category button { border: 0; background: transparent; color: var(--alert); cursor: pointer; font: 11px var(--mono); text-decoration: underline; }
+
 /* ---------- visitor log ---------- */
 .visitor-log {
   max-height: 178px;
@@ -1194,6 +1238,19 @@ footer p {
 }
 
 @media (max-width: 560px) {
+  .learning-category-grid {
+    grid-template-columns: 1fr;
+  }
+  .learning-category-form {
+    width: 100%;
+  }
+  .learning-category-form input {
+    min-width: 0;
+    flex: 1;
+  }
+  .learning-entry-preview {
+    grid-template-columns: 78px minmax(0, 1fr);
+  }
   .post-item,
   .post-item:not([data-editable]) {
     grid-template-columns: 1fr auto;
