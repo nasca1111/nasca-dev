@@ -922,8 +922,11 @@ footer p {
 
 #syslog h2 {
   font-size: 2rem;
-  margin-bottom: 30px;
+  margin-bottom: 6px;
 }
+
+#syslog h5 { color: var(--ink-faint); font: 11px var(--mono); font-weight: 400; }
+.commit-date-tabs { display: flex; gap: 7px; overflow-x: auto; margin: 18px 0 14px; padding-bottom: 4px; scrollbar-width: thin; }
 
 #commit-list {
   list-style: none;
