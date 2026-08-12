@@ -64,7 +64,7 @@
         <label class="entry-jump-label" for="entryJump">Jump to entry
           <select id="entryJump" class="entry-jump-select" data-entry-jump>
             {% for entry in entries %}
-            <option value="entry-{{ entry.id }}">{{ loop.index }}. {{ entry.title }}</option>
+            <option value="entry-{{ entry.id }}">#{{ loop.index }} · {{ entry.title }}</option>
             {% endfor %}
           </select>
         </label>
@@ -85,7 +85,7 @@
               aria-controls="entry-{{ entry.id }}"
               data-tab-target="entry-{{ entry.id }}"
             >
-              <span class="entry-tab-number">{{ '%02d'|format(loop.index) }}</span>{{ entry.title }}
+              <span class="entry-tab-number">#{{ loop.index }}</span>{{ entry.title }}
             </button>
             {% endfor %}
           </div>
