@@ -1,13 +1,13 @@
 :root {
-  --paper: #1a1a1a;
-  --paper-alt: #1a1a1a;
+  --paper: #101113;
+  --paper-alt: #191b1f;
   --ink: #f5efe0;
-  --ink-soft: #f5efe0;
-  --ink-faint: #f5efe0;
-  --line: #1a1a1a;
+  --ink-soft: #dedbd3;
+  --ink-faint: #aaa69b;
+  --line: #484941;
   --clearance: #f5efe0;
   --alert: #ff0000;
-  --black: #1a1a1a;
+  --black: #17181b;
   --mono: "JetBrains Mono", monospace;
   --sans: "IBM Plex Sans KR", sans-serif;
 }
@@ -39,8 +39,11 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
+  background-image:
+    linear-gradient(rgb(245 239 224 / 2%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(245 239 224 / 2%) 1px, transparent 1px);
   background-size: 64px 64px;
-  opacity: 0.35;
+  opacity: 0.55;
   pointer-events: none;
   z-index: 0;
 }
@@ -58,7 +61,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: #3f3f3f;
+  background: rgb(28 30 34 / 92%);
   backdrop-filter: blur(6px);
   border-bottom: 1px solid var(--line);
 }
@@ -120,8 +123,13 @@ nav a:focus-visible {
   background: rgba(14, 110, 90, 0.05);
 }
 .hero {
-  padding: 96px 0 2px;
+  padding: 88px 32px 38px;
   position: relative;
+  margin: 26px 0 24px;
+  border: 1px solid var(--line) !important;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgb(245 239 224 / 5%), transparent 48%), var(--black);
+  box-shadow: 0 14px 32px rgb(0 0 0 / 18%);
 }
 .eyebrow {
   font-family: var(--mono);
@@ -393,6 +401,31 @@ section {
   padding: 64px 0;
   border-top: 1px solid var(--line);
 }
+.wrap > section:not(.hero) {
+  position: relative;
+  margin: 24px 0;
+  padding: 38px 32px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgb(245 239 224 / 3%), transparent 46%), var(--paper-alt);
+  box-shadow: 0 12px 28px rgb(0 0 0 / 14%);
+}
+.wrap > section:not(.hero)::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 24px;
+  width: 56px;
+  height: 2px;
+  background: var(--clearance);
+}
+#contact {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#contact::before { display: none; }
 .sec-head {
   display: flex;
   align-items: baseline;
@@ -415,7 +448,7 @@ section {
   content: "";
   display: block;
   height: 1px;
-  background: var(--line);
+  background: rgb(245 239 224 / 36%);
   margin-top: 12px;
   width: 100%;
 }
@@ -880,8 +913,9 @@ footer p {
   }
 }
 
------ syslog ----- #syslog {
-  margin-top: 80px;
+/* ---------- syslog ---------- */
+#syslog {
+  margin-top: 24px;
 }
 
 #syslog h2 {
@@ -1304,6 +1338,17 @@ footer p {
 }
 
 @media (max-width: 560px) {
+  .wrap {
+    padding: 0 16px;
+  }
+  .hero {
+    margin-top: 16px;
+    padding: 72px 20px 28px;
+  }
+  .wrap > section:not(.hero) {
+    margin: 16px 0;
+    padding: 28px 20px;
+  }
   .visitor-summary-grid {
     grid-template-columns: repeat(2, 1fr);
   }
