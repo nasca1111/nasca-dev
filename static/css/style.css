@@ -409,9 +409,7 @@ section {
   padding: 38px 32px;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background:
-    linear-gradient(135deg, rgb(245 239 224 / 3%), transparent 46%),
-    var(--paper-alt);
+  background: linear-gradient(black), var(--paper-alt);
   box-shadow: 0 12px 28px rgb(0 0 0 / 14%);
 }
 .wrap > section:not(.hero)::before {
@@ -568,6 +566,7 @@ section {
   padding: 4px 9px;
   border-radius: 3px;
   text-transform: uppercase;
+  black-space: nowrap;
 }
 .sev-high {
   background: rgba(181, 69, 11, 0.12);
