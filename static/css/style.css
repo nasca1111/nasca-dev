@@ -568,7 +568,6 @@ section {
   padding: 4px 9px;
   border-radius: 3px;
   text-transform: uppercase;
-  black-space: nowrap;
 }
 .sev-high {
   background: rgba(181, 69, 11, 0.12);
@@ -1347,17 +1346,16 @@ section {
   font-size: 14px;
 }
 .term-line a {
-  color: var(--black);
+  color: black;
   text-decoration: none;
-  border-bottom: 1px solid #2bee34;
+  text-decoration: underline;
 }
 .term-line a:hover {
-  border-color: #1900ff;
-  color: #000000;
-}
-.term-prompt {
-  color: #2bee34;
-  margin-right: 8px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: var(--paper);
+  border-color: #ffffff;
+  color: white;
 }
 
 footer {
