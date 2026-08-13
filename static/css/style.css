@@ -149,7 +149,6 @@ nav a:focus-visible {
 }
 
 .eyebrow::before {
-  content: "";
   width: 8px;
   height: 8px;
   background: var(--green);
@@ -159,11 +158,9 @@ nav a:focus-visible {
 }
 
 .eyebrow::after {
-  content: "";
   width: 16px;
   height: 16px;
   background: var(--green);
-  border-radius: 50%;
   position: absolute;
   margin-left: -4px;
   opacity: 0.4;
