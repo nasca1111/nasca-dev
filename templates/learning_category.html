@@ -42,8 +42,21 @@
               <u>U</u>
             </button>
             <label class="rich-color" title="Text color"
-              >Color <input type="color" value="#f5efe0"
+              ><input type="color" value="#f5efe0"
             /></label>
+            <label class="rich-bg-color" title="Background color"
+              ><input type="color" value="grey"
+            /></label>
+            <select class="rich-font-size" title="Text size">
+              <option value="12px">12px</option>
+              <option value="14px">14px</option>
+              <option value="16px" selected>16px</option>
+              <option value="18px">18px</option>
+              <option value="20px">20px</option>
+              <option value="24px">24px</option>
+              <option value="28px">28px</option>
+              <option value="32px">32px</option>
+            </select>
           </span>
           <div
             class="rich-editor"
@@ -61,10 +74,13 @@
       </form>
       {% endif %} {% if entries %}
       <div class="learning-entry-navigation">
-        <label class="entry-jump-label" for="entryJump">Jump to entry
+        <label class="entry-jump-label" for="entryJump"
+          >Jump to entry
           <select id="entryJump" class="entry-jump-select" data-entry-jump>
             {% for entry in entries %}
-            <option value="entry-{{ entry.id }}">#{{ loop.revindex }} · {{ entry.title }}</option>
+            <option value="entry-{{ entry.id }}">
+              #{{ loop.revindex }} · {{ entry.title }}
+            </option>
             {% endfor %}
           </select>
         </label>
@@ -121,8 +137,21 @@
                     <u>U</u>
                   </button>
                   <label class="rich-color" title="Text color"
-                    >Color <input type="color" value="#f5efe0"
+                    ><input type="color" value="#f5efe0"
                   /></label>
+                  <label class="rich-bg-color" title="Background color"
+                    ><input type="color" value="grey"
+                  /></label>
+                  <select class="rich-font-size" title="Text size">
+                    <option value="12px">12px</option>
+                    <option value="14px">14px</option>
+                    <option value="16px" selected>16px</option>
+                    <option value="18px">18px</option>
+                    <option value="20px">20px</option>
+                    <option value="24px">24px</option>
+                    <option value="28px">28px</option>
+                    <option value="32px">32px</option>
+                  </select>
                 </span>
                 <div class="rich-editor" contenteditable="true">
                   {{ entry.content|learning_html }}
