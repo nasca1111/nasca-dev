@@ -175,10 +175,13 @@
             </div>
             <div class="learning-entry-list" aria-label="{{ category.name }} recent entries">
               {% for entry in category.entries|sort(attribute='created_at', reverse=true) %}
-              <a class="learning-entry-preview" href="{{ url_for('learning_category', category_id=category.id) }}#entry-{{ entry.id }}">
+              <div class="commit-date-tabs">
+                <a class="learning-entry-preview" href="{{ url_for('learning_category', category_id=category.id) }}#entry-{{ entry.id }}">
                 <span class="learning-entry-date">{{ entry.created_at.strftime('%Y.%m.%d') }}</span>
                 <span class="learning-entry-title">{{ entry.title }}</span>
               </a>
+              </div>
+
               {% else %}
               <p class="learning-empty">No learning entries yet.</p>
               {% endfor %}
