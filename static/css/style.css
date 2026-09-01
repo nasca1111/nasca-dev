@@ -791,7 +791,7 @@ section {
   font-size: 13px;
 }
 .learning-entry-preview:hover {
-  color: var(--clearance);
+  color: var(--green);
 }
 .learning-entry-title {
   overflow: hidden;
