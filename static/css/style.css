@@ -2458,6 +2458,64 @@ footer p {
 }
 
 .flashcard-deck-list {
-  padding-right: 4px; /* 스크롤바가 카드 내용 안 가리게 여유 */
-  scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.flashcard-deck {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--border, #2a2a2a);
+  border-radius: 6px;
+  background: var(--panel, #111);
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.flashcard-deck:hover {
+  border-color: var(--fg, #555);
+  background: var(--panel-hover, #1a1a1a);
+}
+
+.flashcard-deck > div {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0; /* 텍스트 말줄임 처리 위해 필요 */
+  flex: 1;
+}
+
+.flashcard-deck .sec-num {
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  color: var(--muted, #888);
+}
+
+.deck-title-link {
+  min-width: 0;
+  flex: 0 1 auto;
+}
+.deck-title-link h2 {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deck-progress {
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  color: var(--muted, #888);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.flashcard-deck-actions {
+  flex: 0 0 auto;
 }
