@@ -2357,7 +2357,12 @@ footer p {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  max-height: calc(5 * 44px + 4 * 6px); /* 아이템 5개 높이 */
+  overflow-y: auto;
+  padding-right: 4px; /* 스크롤바가 내용 가리지 않게 여유 */
+  scrollbar-width: thin;
 }
+
 .card-picker-item {
   display: flex;
   align-items: center;
@@ -2407,17 +2412,17 @@ footer p {
 }
 
 .card-picker-item[data-status="review"] {
-  border-left-color: #e0555a;
+  border-left-color: var(--alert, #e0555a);
 }
 .card-picker-item[data-status="review"] span {
-  background: #e0555a;
+  background: var(--alert, #e0555a);
 }
 
 .card-picker-item[data-status="known"] {
-  border-left-color: #3fae6a;
+  border-left-color: var(--green, #3fae6a);
 }
 .card-picker-item[data-status="known"] span {
-  background: #3fae6a;
+  background: var(--green, #3fae6a);
 }
 
 .card-picker-item[data-status="new"] {
