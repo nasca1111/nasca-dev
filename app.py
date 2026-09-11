@@ -44,9 +44,9 @@ class LearningHtmlSanitizer(HTMLParser):
     allowed_tags = {
         "a", "b", "blockquote", "br", "code", "div", "em", "h1", "h2", "h3",
         "h4", "h5", "h6", "hr", "i", "li", "ol", "p", "pre", "s", "span",
-        "strong", "table", "tbody", "td", "th", "thead", "tr", "u", "ul",
+        "strong", "table", "tbody", "td", "th", "thead", "tr", "u", "ul", "img", "audio",
     }
-    void_tags = {"br", "hr"}
+    void_tags = {"br", "hr", "img"}
     blocked_tags = {"script", "style", "iframe", "object", "embed", "svg", "math"}
 
     def __init__(self):
@@ -90,6 +90,14 @@ class LearningHtmlSanitizer(HTMLParser):
                 safe_attributes.append('rel="noopener noreferrer"')
                 if href.startswith(("http://", "https://")):
                     safe_attributes.append('target="_blank"')
+        elif tag in {"img", "audio"}:
+            src = attributes.get("src", "")
+            if src.startswith("/static/uploads/flashcards/"):
+                safe_attributes.append(f'src="{escape(src, quote=True)}"')
+                if tag == "img":
+                    safe_attributes.append(f'alt="{escape(attributes.get("alt", "Anki card image"), quote=True)}"')
+                else:
+                    safe_attributes.append("controls")
         suffix = f" {' '.join(safe_attributes)}" if safe_attributes else ""
         self.parts.append(f"<{tag}{suffix}>")
 
@@ -149,6 +157,40 @@ def render_anki_template(template, fields, front_side=""):
     return content
 
 
+def save_anki_media(media_files):
+    """Save package media under a unique static folder and return source URL mappings."""
+    if not media_files:
+        return {}
+    folder = secrets.token_urlsafe(12)
+    target_directory = os.path.join(BASE_DIR, "static", "uploads", "flashcards", folder)
+    os.makedirs(target_directory, exist_ok=True)
+    urls = {}
+    allowed_extensions = {".avif", ".gif", ".jpeg", ".jpg", ".mp3", ".ogg", ".png", ".wav", ".webp"}
+    for index, (original_name, data) in enumerate(media_files.items()):
+        safe_name = secure_filename(original_name)
+        if not safe_name or os.path.splitext(safe_name)[1].lower() not in allowed_extensions:
+            continue
+        saved_name = f"{index}-{safe_name}"
+        with open(os.path.join(target_directory, saved_name), "wb") as media_file:
+            media_file.write(data)
+        urls[original_name] = f"/static/uploads/flashcards/{folder}/{saved_name}"
+    return urls
+
+
+def replace_anki_media(content, media_urls):
+    """Turn Anki image/audio references into URLs that can safely be shown on this site."""
+    def replace_src(match):
+        prefix, source = match.groups()
+        return f"{prefix}{media_urls.get(source, source)}" if source in media_urls else match.group(0)
+
+    content = re.sub(r"((?:src|href)=[\"'])([^\"']+)", replace_src, content, flags=re.IGNORECASE)
+    return re.sub(
+        r"\[sound:([^\]]+)\]",
+        lambda match: f'<audio controls src="{media_urls[match.group(1)]}"></audio>' if match.group(1) in media_urls else "",
+        content,
+    )
+
+
 def read_anki_package(upload):
     """Read front/back fields from an .apkg without extracting its contents."""
     if not upload or not upload.filename:
@@ -160,12 +202,24 @@ def read_anki_package(upload):
     if len(package_bytes) > 50 * 1024 * 1024:
         raise ValueError("Each Anki package must be 50 MB or smaller.")
     try:
-        archive = zipfile.ZipFile(io.BytesIO(package_bytes))
-        database_name = next(
-            name for name in archive.namelist()
-            if name in {"collection.anki2", "collection.anki21"}
-        )
-        database_bytes = archive.read(database_name)
+        with zipfile.ZipFile(io.BytesIO(package_bytes)) as archive:
+            database_name = next(
+                name for name in archive.namelist()
+                if name in {"collection.anki2", "collection.anki21"}
+            )
+            database_bytes = archive.read(database_name)
+            media_files = {}
+            try:
+                media_index = json.loads(archive.read("media"))
+                total_media_size = 0
+                for archive_name, original_name in media_index.items():
+                    data = archive.read(str(archive_name))
+                    total_media_size += len(data)
+                    if total_media_size > 80 * 1024 * 1024:
+                        raise ValueError("The package media must be 80 MB or smaller.")
+                    media_files[original_name] = data
+            except KeyError:
+                pass
     except (StopIteration, zipfile.BadZipFile, KeyError):
         raise ValueError("This does not appear to be a valid Anki package.")
 
@@ -210,7 +264,7 @@ def read_anki_package(upload):
         raise ValueError("No cards with both front and back fields were found.")
     if sum(len(cards) for cards in cards_by_deck.values()) > 10000:
         raise ValueError("An Anki package can contain up to 10,000 cards.")
-    return cards_by_deck
+    return cards_by_deck, media_files
 
 
 @app.errorhandler(RequestEntityTooLarge)
@@ -228,6 +282,13 @@ def learning_html(value):
 
 def is_admin():
     return session.get("is_admin", False)
+
+
+def flashcard_deck_name(deck):
+    """Use the package filename when an Anki export only supplies its Default deck name."""
+    if deck.name in {"Default", "Untitled deck"}:
+        return os.path.splitext(deck.source_filename)[0]
+    return deck.name
 
 
 def request_ip():
@@ -275,6 +336,7 @@ def inject_template_values():
         "is_admin": is_admin(),
         "csrf_token": csrf_token,
         "describe_user_agent": describe_user_agent,
+        "flashcard_deck_name": flashcard_deck_name,
     }
 
 
@@ -391,17 +453,19 @@ def upload_flashcards():
             raise ValueError("At least one Anki .apkg file is required.")
         imported_count = 0
         for upload in uploads:
-            cards_by_deck = read_anki_package(upload)
+            cards_by_deck, media_files = read_anki_package(upload)
             source_filename = secure_filename(upload.filename) or "anki-deck.apkg"
+            media_urls = save_anki_media(media_files)
             for name, cards in cards_by_deck.items():
-                deck = FlashcardDeck(name=name[:200], source_filename=source_filename)
+                deck_name = os.path.splitext(source_filename)[0] if name in {"Default", "Untitled deck"} else name
+                deck = FlashcardDeck(name=deck_name[:200], source_filename=source_filename)
                 db.session.add(deck)
                 db.session.flush()
                 for position, (front, back, _) in enumerate(cards, start=1):
                     db.session.add(Flashcard(
                         deck=deck,
-                        front=sanitize_learning_html(front),
-                        back=sanitize_learning_html(back),
+                        front=sanitize_learning_html(replace_anki_media(front, media_urls)),
+                        back=sanitize_learning_html(replace_anki_media(back, media_urls)),
                         position=position,
                     ))
                 imported_count += len(cards)
