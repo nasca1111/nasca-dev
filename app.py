@@ -17,6 +17,7 @@ from flask import Flask, abort, flash, redirect, render_template, request, sessi
 from werkzeug.utils import secure_filename
 from markupsafe import Markup
 from werkzeug.security import check_password_hash
+from werkzeug.exceptions import RequestEntityTooLarge
 from extensions import db
 
 app = Flask(__name__)
@@ -27,6 +28,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:////home/ec2-user/data/app.db"
 #test
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024  # Allow multiple Anki packages in one upload.
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
@@ -117,6 +119,36 @@ def cleanup_expired_visitors():
     return Visitor.query.filter(Visitor.visited_at < cutoff).delete(synchronize_session=False)
 
 
+def render_anki_template(template, fields, front_side=""):
+    """Apply the common Anki field and cloze replacements without executing package code."""
+    field_values = {field.get("name", ""): value for field, value in zip(template.get("fields", []), fields)}
+
+    def cloze_value(value, answer):
+        target = str(template.get("ordinal", 0) + 1)
+
+        def replace(match):
+            number, text, hint = match.groups()
+            if answer or number != target:
+                return text
+            return f"[{hint or '...'}]"
+
+        return re.sub(r"\{\{c(\d+)::(.*?)(?:::(.*?))?\}\}", replace, value, flags=re.DOTALL)
+
+    content = template.get("format", "")
+    content = content.replace("{{FrontSide}}", front_side)
+
+    def replace_field(match):
+        raw_name = match.group(1).strip()
+        filters, _, field_name = raw_name.rpartition(":")
+        value = field_values.get(field_name if filters else raw_name, "")
+        if "cloze" in filters:
+            return cloze_value(value, "answer" in template)
+        return value
+
+    content = re.sub(r"\{\{\{?([^{}]+?)\}?\}\}", replace_field, content)
+    return content
+
+
 def read_anki_package(upload):
     """Read front/back fields from an .apkg without extracting its contents."""
     if not upload or not upload.filename:
@@ -125,8 +157,8 @@ def read_anki_package(upload):
         raise ValueError("Only .apkg Anki package files can be uploaded.")
 
     package_bytes = upload.read()
-    if len(package_bytes) > 10 * 1024 * 1024:
-        raise ValueError("The Anki package must be 10 MB or smaller.")
+    if len(package_bytes) > 50 * 1024 * 1024:
+        raise ValueError("Each Anki package must be 50 MB or smaller.")
     try:
         archive = zipfile.ZipFile(io.BytesIO(package_bytes))
         database_name = next(
@@ -143,12 +175,13 @@ def read_anki_package(upload):
     try:
         connection = sqlite3.connect(f"file:{database_path}?mode=ro", uri=True)
         try:
-            deck_names = {}
-            row = connection.execute("SELECT decks FROM col LIMIT 1").fetchone()
+            deck_names, models = {}, {}
+            row = connection.execute("SELECT decks, models FROM col LIMIT 1").fetchone()
             if row:
                 deck_names = {int(deck_id): data.get("name", "Untitled deck") for deck_id, data in json.loads(row[0]).items()}
+                models = json.loads(row[1])
             rows = connection.execute(
-                "SELECT c.did, n.flds, c.due FROM cards c JOIN notes n ON n.id = c.nid ORDER BY c.due, c.id"
+                "SELECT c.did, n.flds, n.mid, c.ord, c.due FROM cards c JOIN notes n ON n.id = c.nid ORDER BY c.due, c.id"
             ).fetchall()
         finally:
             connection.close()
@@ -158,9 +191,19 @@ def read_anki_package(upload):
         os.unlink(database_path)
 
     cards_by_deck = {}
-    for deck_id, fields, due in rows:
-        front, *remaining = fields.split("\x1f")
-        back = remaining[0] if remaining else ""
+    for deck_id, fields, model_id, ordinal, due in rows:
+        values = fields.split("\x1f")
+        model = models.get(str(model_id), {})
+        templates = model.get("tmpls", [])
+        if ordinal < len(templates):
+            field_definitions = model.get("flds", [])
+            question_template = {"format": templates[ordinal].get("qfmt", ""), "fields": field_definitions, "ordinal": ordinal}
+            answer_template = {"format": templates[ordinal].get("afmt", ""), "fields": field_definitions, "ordinal": ordinal, "answer": True}
+            front = render_anki_template(question_template, values)
+            back = render_anki_template(answer_template, values, front)
+        else:
+            front, *remaining = values
+            back = next((value for value in remaining if value.strip()), front)
         if front.strip() and back.strip():
             cards_by_deck.setdefault(deck_names.get(deck_id, "Untitled deck"), []).append((front, back, due))
     if not cards_by_deck:
@@ -168,6 +211,14 @@ def read_anki_package(upload):
     if sum(len(cards) for cards in cards_by_deck.values()) > 10000:
         raise ValueError("An Anki package can contain up to 10,000 cards.")
     return cards_by_deck
+
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_large_upload(error):
+    if request.path == "/flashcards/upload":
+        flash("Uploads can be up to 100 MB in total, with each .apkg up to 50 MB.")
+        return redirect(url_for("flashcards"))
+    return error, 413
 
 
 @app.template_filter("learning_html")
