@@ -243,6 +243,18 @@ h1 {
   box-shadow: 0 0 0 2px rgb(255 0 0 / 20%);
 }
 
+.btn.btn-green {
+  border: 1px solid var(--green) !important;
+  background: #000 !important;
+  color: var(--green) !important;
+}
+.btn.btn-green:hover,
+.btn.btn-green:focus-visible {
+  background: #0b2600 !important;
+  color: rgb(6, 214, 6) !important;
+  box-shadow: 0 0 0 2px rgba(115, 238, 152, 0.2);
+}
+
 /* ---------- flashcards ---------- */
 .flashcard-page {
   padding-top: 42px;
@@ -2308,4 +2320,109 @@ footer p {
   .study-controls .btn {
     grid-row: 2;
   }
+}
+
+/* 전체 문제 / 모르는 문제 탭 버튼 */
+.study-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.study-filter .btn {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border, #2a2a2a);
+  background: transparent;
+  color: var(--muted, #888);
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
+}
+.study-filter .btn:hover {
+  border-color: var(--fg, #ddd);
+  color: var(--fg, #ddd);
+}
+.study-filter .btn.is-active {
+  background: var(--fg, #f4f4f4);
+  color: var(--bg, #0b0b0b);
+  border-color: var(--fg, #f4f4f4);
+}
+
+/* 문제 선택 목록 (card-picker) */
+.card-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.card-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border, #2a2a2a);
+  border-left: 3px solid var(--border, #2a2a2a);
+  border-radius: 4px;
+  background: var(--panel, #111);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    transform 0.1s;
+}
+.card-picker-item:hover {
+  background: var(--panel-hover, #1a1a1a);
+  transform: translateX(2px);
+}
+.card-picker-item span {
+  flex: 0 0 auto;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 3px;
+  color: var(--bg, #0b0b0b);
+}
+.card-picker-item strong {
+  font-weight: 400;
+  font-size: 0.92rem;
+  color: var(--fg, #ddd);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 상태별 색상 구분 — REVIEW는 다시 볼 문제라 경고색, KNOWN은 초록, NOW는 강조색 */
+.card-picker-item[data-status="now"] {
+  border-left-color: var(--accent, #4da3ff);
+}
+.card-picker-item[data-status="now"] span {
+  background: var(--accent, #4da3ff);
+}
+
+.card-picker-item[data-status="review"] {
+  border-left-color: #e0555a;
+}
+.card-picker-item[data-status="review"] span {
+  background: #e0555a;
+}
+
+.card-picker-item[data-status="known"] {
+  border-left-color: #3fae6a;
+}
+.card-picker-item[data-status="known"] span {
+  background: #3fae6a;
+}
+
+.card-picker-item[data-status="new"] {
+  border-left-color: var(--border, #333);
+}
+.card-picker-item[data-status="new"] span {
+  background: var(--muted, #555);
 }
