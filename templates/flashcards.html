@@ -14,8 +14,8 @@
     {% if is_admin %}
     <form class="flashcard-upload" action="{{ url_for('upload_flashcards') }}" method="POST" enctype="multipart/form-data">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <label>ANKI PACKAGE (.apkg)<input type="file" name="anki_file" accept=".apkg" required /></label>
-      <button class="btn btn-primary" type="submit">Import deck →</button>
+      <label>ANKI PACKAGES (.apkg)<input type="file" name="anki_files" accept=".apkg" multiple required /></label>
+      <button class="btn btn-primary" type="submit">Import selected decks →</button>
     </form>
     {% endif %}
     <section class="flashcard-deck-list">

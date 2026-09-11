@@ -335,23 +335,27 @@ def flashcards():
 def upload_flashcards():
     validate_csrf()
     try:
-        cards_by_deck = read_anki_package(request.files.get("anki_file"))
-        source_filename = secure_filename(request.files["anki_file"].filename) or "anki-deck.apkg"
+        uploads = [upload for upload in request.files.getlist("anki_files") if upload.filename]
+        if not uploads:
+            raise ValueError("At least one Anki .apkg file is required.")
         imported_count = 0
-        for name, cards in cards_by_deck.items():
-            deck = FlashcardDeck(name=name[:200], source_filename=source_filename)
-            db.session.add(deck)
-            db.session.flush()
-            for position, (front, back, _) in enumerate(cards, start=1):
-                db.session.add(Flashcard(
-                    deck=deck,
-                    front=sanitize_learning_html(front),
-                    back=sanitize_learning_html(back),
-                    position=position,
-                ))
-            imported_count += len(cards)
+        for upload in uploads:
+            cards_by_deck = read_anki_package(upload)
+            source_filename = secure_filename(upload.filename) or "anki-deck.apkg"
+            for name, cards in cards_by_deck.items():
+                deck = FlashcardDeck(name=name[:200], source_filename=source_filename)
+                db.session.add(deck)
+                db.session.flush()
+                for position, (front, back, _) in enumerate(cards, start=1):
+                    db.session.add(Flashcard(
+                        deck=deck,
+                        front=sanitize_learning_html(front),
+                        back=sanitize_learning_html(back),
+                        position=position,
+                    ))
+                imported_count += len(cards)
         db.session.commit()
-        flash(f"Imported {imported_count} flashcards.")
+        flash(f"Imported {imported_count} flashcards from {len(uploads)} package(s).")
     except ValueError as exc:
         db.session.rollback()
         flash(str(exc))
