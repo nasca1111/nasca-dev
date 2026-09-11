@@ -49,13 +49,13 @@
               type="button"
               aria-label="문제 목록 닫기"
             >
-              ×
+              Close
             </button>
           </div>
           <p class="card-catalog-help">
             원하는 문제를 선택하면 그 문제부터 다시 학습합니다.
           </p>
-          <div id="cardPicker" class="card-picker"></div>
+          <div id="cardPicker" class="post-item"></div>
         </section>
         <button
           id="studyCard"
@@ -85,10 +85,10 @@
         </button>
         <div class="study-controls">
           <button class="btn btn-danger" id="unknownCard" type="button">
-            ← 모름</button
+            Review</button
           ><span id="cardProgress">1 / {{ cards|length }}</span
           ><button class="btn btn-primary" id="knownCard" type="button">
-            알고 있음 →
+            Pass
           </button>
         </div>
         <div class="study-status">
