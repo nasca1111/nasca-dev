@@ -39,18 +39,18 @@
           aria-live="polite"
         >
           <div class="card-catalog-head">
-            <div>
-              <span id="catalogLabel">전체 문제</span
-              ><strong id="catalogCount"></strong>
-            </div>
             <button
               id="closeCatalog"
               class="modal-close"
               type="button"
               aria-label="문제 목록 닫기"
             >
-              Close
+              X
             </button>
+            <div>
+              <span id="catalogLabel">전체 문제</span
+              ><strong id="catalogCount"></strong>
+            </div>
           </div>
           <p class="card-catalog-help">
             원하는 문제를 선택하면 그 문제부터 다시 학습합니다.
@@ -65,7 +65,7 @@
         >
           <section class="study-card">
             <div class="study-card-panel study-question-panel">
-              <span>QUESTION / 문제</span>
+              <span>QUESTION</span>
               <div id="cardContent" class="study-card-content">
                 {{ cards[0].front|learning_html }}
               </div>
@@ -77,7 +77,7 @@
               class="study-card-panel study-answer-panel"
               hidden
             >
-              <span>ANSWER / 답변</span>
+              <span>ANSWER</span>
               <div id="answerContent" class="study-card-content"></div>
             </div>
           </section>
@@ -85,10 +85,10 @@
         </button>
         <div class="study-controls">
           <button class="btn btn-danger" id="unknownCard" type="button">
-            Review</button
+            FAIL</button
           ><span id="cardProgress">1 / {{ cards|length }}</span
           ><button class="btn btn-green" id="knownCard" type="button">
-            Pass
+            PASS
           </button>
         </div>
         <div class="study-status">
