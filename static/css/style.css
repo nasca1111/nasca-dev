@@ -2406,28 +2406,32 @@ footer p {
 /* 상태별 색상 구분 — REVIEW는 다시 볼 문제라 경고색, KNOWN은 초록, NOW는 강조색 */
 .card-picker-item[data-status="now"] {
   border-left-color: var(--accent, #4da3ff);
+  color: var(--accent, #4da3ff);
 }
 .card-picker-item[data-status="now"] span {
-  background: var(--accent, #4da3ff);
+  background: var(--bg, #0b0b0b);
 }
 
 .card-picker-item[data-status="review"] {
   border-left-color: var(--alert, #e0555a);
+  color: var(--alert, #e0555a);
 }
 .card-picker-item[data-status="review"] span {
-  background: var(--alert, #e0555a);
+  background: var(--bg, #0b0b0b);
 }
 
 .card-picker-item[data-status="known"] {
   border-left-color: var(--green, #3fae6a);
+  color: var(--green, #3fae6a);
 }
 .card-picker-item[data-status="known"] span {
-  background: var(--green, #3fae6a);
+  background: var(--bg, #0b0b0b);
 }
 
 .card-picker-item[data-status="new"] {
   border-left-color: var(--border, #333);
+  color: var(--border, #333);
 }
 .card-picker-item[data-status="new"] span {
-  background: var(--muted, #555);
+  background: var(--bg, #0b0b0b);
 }
