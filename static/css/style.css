@@ -2556,6 +2556,7 @@ footer p {
   top: 6px;
   left: 6px;
   z-index: 2;
+  display: none;
 }
 .deck-select input {
   width: 18px;

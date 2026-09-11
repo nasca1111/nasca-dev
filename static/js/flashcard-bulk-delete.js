@@ -17,7 +17,7 @@
 
   cancelBtn.addEventListener("click", () => {
     checkboxes().forEach((cb) => {
-      cb.checked = false;
+      cb.style.display = "";
     });
     refresh();
   });
