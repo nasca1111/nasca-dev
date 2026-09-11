@@ -16,11 +16,7 @@
       <a class="board-back" href="{{ url_for('flashcards') }}">← All decks</a>
       <header class="learning-board-header">
         <span class="sec-num">{{ cards|length }} CARDS</span>
-        <h3>{{ flashcard_deck_name(deck) }}</h3>
-        <p>
-          카드를 뒤집어 답을 확인한 뒤, 아는 문제만 체크하세요. 체크하지 않은
-          문제는 복습 목록에 남습니다.
-        </p>
+        <h2>{{ flashcard_deck_name(deck) }}</h2>
       </header>
       {% if cards %}
       <section class="study-area">
