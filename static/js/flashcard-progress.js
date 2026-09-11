@@ -11,8 +11,9 @@
     }
     const ids = deck.dataset.cardIds ? deck.dataset.cardIds.split(",") : [];
     const knownCount = ids.filter((id) => known[id]).length;
-    deck.querySelector(".deck-progress").textContent =
-      `알고 있는 문제 ${knownCount} · 복습할 문제 ${ids.length - knownCount}`;
+    deck.querySelector(".deck-progress-known").textContent = knownCount;
+    deck.querySelector(".deck-progress-review").textContent =
+      ids.length - knownCount;
   });
 })();
 

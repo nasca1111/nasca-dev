@@ -2468,7 +2468,7 @@ footer p {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 10px 14px;
+  padding: 6px 14px;
   border: 1px solid var(--border, #2a2a2a);
   border-radius: 6px;
   background: var(--panel, #111);
@@ -2484,7 +2484,7 @@ footer p {
 .flashcard-deck > div {
   display: flex;
   align-items: baseline;
-  gap: 12px;
+  gap: 10px;
   min-width: 0; /* 텍스트 말줄임 처리 위해 필요 */
   flex: 1;
 }
@@ -2510,10 +2510,17 @@ footer p {
 
 .deck-progress {
   flex: 0 0 auto;
-  font-size: 0.78rem;
-  color: var(--muted, #888);
-  margin: 0;
-  white-space: nowrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.deck-progress-known {
+  color: var(--green, #11ff00);
+}
+.deck-progress-review {
+  color: var(--alert, #ff0000);
 }
 
 .flashcard-deck-actions {

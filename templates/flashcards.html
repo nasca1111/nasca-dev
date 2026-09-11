@@ -72,9 +72,12 @@
             >
               <h2>{{ flashcard_deck_name(deck) }}</h2>
             </a>
-            <p class="deck-progress">
-              알고 있는 문제 0 · 복습할 문제 {{ deck.cards|length }}
-            </p>
+            <span class="deck-progress">
+              <span class="deck-progress-known">0</span>/<span
+                class="deck-progress-review"
+                >{{ deck.cards|length }}</span
+              >
+            </span>
           </div>
           <div class="flashcard-deck-actions">
             {% if is_admin %}
