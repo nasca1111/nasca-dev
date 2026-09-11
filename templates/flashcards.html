@@ -4,24 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flashcards</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="/static/css/style.css" />
   </head>
+
   <body>
     <main class="flashcard-page wrap">
-      <a class="board-back" href="{{ url_for('home') }}">← Portfolio home</a>
+      <a class="board-back" href="{{ url_for('home') }}"> ← Portfolio home </a>
+
       <header class="learning-board-header">
         <span class="sec-num">STUDY / ANKI</span>
         <h1>Flashcards</h1>
         <p>Upload an Anki package and study it here.</p>
       </header>
-      {% with messages = get_flashed_messages() %}{% if messages %}
+
+      {% with messages = get_flashed_messages() %} {% if messages %}
       <p class="learning-flash">{{ messages[-1] }}</p>
-      {% endif %}{% endwith %} {% if is_admin %}
+      {% endif %} {% endwith %} {% if is_admin %}
       <form
         class="flashcard-upload"
         action="{{ url_for('upload_flashcards') }}"
@@ -29,14 +34,18 @@
         enctype="multipart/form-data"
       >
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <label
-          >ANKI PACKAGES (.apkg)<input
+
+        <label>
+          ANKI PACKAGES (.apkg)
+          <input
             type="file"
             name="anki_files"
             accept=".apkg"
             multiple
             required
-        /></label>
+          />
+        </label>
+
         <button class="btn btn-primary" type="submit">
           Import selected decks →
         </button>
@@ -48,12 +57,15 @@
         action="{{ url_for('delete_selected_flashcard_decks') }}"
       >
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
         {% if is_admin %}
         <div id="deckBulkBar" class="deck-bulk-bar" hidden>
           <span id="deckBulkCount">0개 선택</span>
+
           <button type="submit" class="btn btn-danger" id="deckBulkDeleteBtn">
             선택 삭제
           </button>
+
           <button type="button" class="btn btn-ghost" id="deckBulkCancel">
             선택 취소
           </button>
@@ -61,7 +73,10 @@
         {% endif %}
 
         <div class="deck-browser">
-          <label class="deck-search-label" for="deckSearch">FIND A DECK</label>
+          <label class="deck-search-label" for="deckSearch">
+            FIND A DECK
+          </label>
+
           <input
             id="deckSearch"
             class="deck-search"
@@ -69,13 +84,15 @@
             placeholder="덱 이름 또는 파일명으로 검색"
             autocomplete="off"
           />
-          <span id="deckSearchSummary" class="deck-search-summary"
-            >{{ decks|length }} decks</span
-          >
+
+          <span id="deckSearchSummary" class="deck-search-summary">
+            {{ decks|length }} decks
+          </span>
         </div>
 
         <section class="flashcard-deck-list">
           {% for deck in decks %}
+
           <article
             class="flashcard-deck"
             data-deck-id="{{ deck.id }}"
@@ -92,15 +109,18 @@
               />
             </label>
             {% endif %}
-            
+
+            <a
               class="deck-title-link"
               href="{{ url_for('study_flashcards', deck_id=deck.id) }}"
             >
-              <span class="sec-num">{{ deck.cards|length }} CARDS</span>
+              <span class="sec-num"> {{ deck.cards|length }} CARDS </span>
+
               <h2>
                 {{ flashcard_deck_name(deck)[:6] }}{% if
                 flashcard_deck_name(deck)|length > 6 %}…{% endif %}
               </h2>
+
               <span class="deck-progress">
                 <span class="deck-progress-known">0</span>/<span
                   class="deck-progress-total"
@@ -109,13 +129,17 @@
               </span>
             </a>
           </article>
+
           {% else %}
+
           <p class="learning-empty-state">No decks imported yet.</p>
+
           {% endfor %}
         </section>
       </form>
       {% endif %}
     </main>
+
     <script src="/static/js/flashcard-progress.js"></script>
     <script src="/static/js/flashcard-bulk-delete.js"></script>
   </body>
