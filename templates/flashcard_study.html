@@ -21,12 +21,40 @@
       {% if cards %}
       <section class="study-area">
         <div class="study-filter" role="group" aria-label="문제 목록 보기">
-          <button class="btn btn-ghost" data-list-filter="all" type="button">전체 문제 목록</button>
-          <button class="btn btn-ghost" data-list-filter="unknown" type="button">모르는 문제 목록</button>
+          <button class="btn btn-ghost" data-list-filter="all" type="button">
+            전체 문제 목록
+          </button>
+          <button
+            class="btn btn-ghost"
+            data-list-filter="unknown"
+            type="button"
+          >
+            모르는 문제 목록
+          </button>
         </div>
-        <section id="cardCatalog" class="card-catalog" hidden aria-live="polite">
-          <div class="card-catalog-head"><div><span id="catalogLabel">전체 문제</span><strong id="catalogCount"></strong></div><button id="closeCatalog" class="modal-close" type="button" aria-label="문제 목록 닫기">×</button></div>
-          <p class="card-catalog-help">원하는 문제를 선택하면 그 문제부터 다시 학습합니다.</p>
+        <section
+          id="cardCatalog"
+          class="card-catalog"
+          hidden
+          aria-live="polite"
+        >
+          <div class="card-catalog-head">
+            <div>
+              <span id="catalogLabel">전체 문제</span
+              ><strong id="catalogCount"></strong>
+            </div>
+            <button
+              id="closeCatalog"
+              class="modal-close"
+              type="button"
+              aria-label="문제 목록 닫기"
+            >
+              ×
+            </button>
+          </div>
+          <p class="card-catalog-help">
+            원하는 문제를 선택하면 그 문제부터 다시 학습합니다.
+          </p>
           <div id="cardPicker" class="card-picker"></div>
         </section>
         <button
@@ -35,10 +63,24 @@
           type="button"
           aria-label="Reveal answer"
         >
-          <div class="study-card-panel study-question-panel"><span>QUESTION / 문제</span><div id="cardContent" class="study-card-content">
-            {{ cards[0].front|learning_html }}
-          </div></div>
-          <div id="answerPanel" class="study-card-panel study-answer-panel" hidden><span>ANSWER / 답변</span><div id="answerContent" class="study-card-content"></div></div>
+          <section class="study-card">
+            <div class="study-card-panel study-question-panel">
+              <span>QUESTION / 문제</span>
+              <div id="cardContent" class="study-card-content">
+                {{ cards[0].front|learning_html }}
+              </div>
+            </div>
+          </section>
+          <section class="study-card">
+            <div
+              id="answerPanel"
+              class="study-card-panel study-answer-panel"
+              hidden
+            >
+              <span>ANSWER / 답변</span>
+              <div id="answerContent" class="study-card-content"></div>
+            </div>
+          </section>
           <small id="cardHint">카드를 눌러 답변 보기</small>
         </button>
         <div class="study-controls">
