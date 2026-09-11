@@ -5,6 +5,7 @@ import os
 import re
 import secrets
 import sqlite3
+import subprocess
 import tempfile
 import zipfile
 from datetime import datetime, time, timedelta
@@ -19,6 +20,11 @@ from markupsafe import Markup
 from werkzeug.security import check_password_hash
 from werkzeug.exceptions import RequestEntityTooLarge
 from extensions import db
+
+try:
+    import zstandard as zstd
+except ImportError:  # The command-line fallback supports existing deployments during upgrade.
+    zstd = None
 
 app = Flask(__name__)
 # Database configuration
@@ -203,6 +209,23 @@ def decode_anki_text(value):
     return value.decode("utf-8", errors="replace")
 
 
+def decompress_anki21b(data):
+    """Decode the Zstandard-compressed SQLite collection in modern Anki exports."""
+    try:
+        if zstd:
+            unpacked = zstd.ZstdDecompressor().decompress(data, max_output_size=100 * 1024 * 1024)
+        else:
+            result = subprocess.run(
+                ["zstd", "-d", "-q", "-c"], input=data, capture_output=True, check=True, timeout=20
+            )
+            unpacked = result.stdout
+    except (OSError, subprocess.SubprocessError, Exception) as exc:
+        raise ValueError("This modern Anki package could not be decompressed.") from exc
+    if len(unpacked) > 100 * 1024 * 1024:
+        raise ValueError("The Anki collection data must be 100 MB or smaller.")
+    return unpacked
+
+
 def read_anki_package(upload):
     """Read front/back fields from an .apkg without extracting its contents."""
     if not upload or not upload.filename:
@@ -217,12 +240,17 @@ def read_anki_package(upload):
         with zipfile.ZipFile(io.BytesIO(package_bytes)) as archive:
             database_name = next(
                 name for name in archive.namelist()
-                if name in {"collection.anki2", "collection.anki21"}
+                if name in {"collection.anki21b", "collection.anki21", "collection.anki2"}
             )
             database_bytes = archive.read(database_name)
+            if database_name == "collection.anki21b":
+                database_bytes = decompress_anki21b(database_bytes)
             media_files = {}
             try:
-                media_index = json.loads(decode_anki_text(archive.read("media")))
+                raw_media_index = archive.read("media")
+                if raw_media_index.startswith(b"\x28\xb5\x2f\xfd"):
+                    raw_media_index = decompress_anki21b(raw_media_index)
+                media_index = json.loads(decode_anki_text(raw_media_index)) if raw_media_index else {}
                 total_media_size = 0
                 for archive_name, original_name in media_index.items():
                     data = archive.read(str(archive_name))
@@ -243,13 +271,20 @@ def read_anki_package(upload):
         try:
             connection.text_factory = bytes
             deck_names, models = {}, {}
-            row = connection.execute("SELECT decks, models FROM col LIMIT 1").fetchone()
-            if row:
+            table_names = {decode_anki_text(row[0]) for row in connection.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            if "decks" in table_names:
                 deck_names = {
-                    int(deck_id): decode_anki_text(data.get("name", "Untitled deck"))
-                    for deck_id, data in json.loads(decode_anki_text(row[0])).items()
+                    deck_id: decode_anki_text(name)
+                    for deck_id, name in connection.execute("SELECT id, name FROM decks")
                 }
-                models = json.loads(decode_anki_text(row[1]))
+            else:
+                row = connection.execute("SELECT decks, models FROM col LIMIT 1").fetchone()
+                if row:
+                    deck_names = {
+                        int(deck_id): decode_anki_text(data.get("name", "Untitled deck"))
+                        for deck_id, data in json.loads(decode_anki_text(row[0])).items()
+                    }
+                    models = json.loads(decode_anki_text(row[1]))
             rows = connection.execute(
                 "SELECT c.did, n.flds, n.mid, c.ord, c.due FROM cards c JOIN notes n ON n.id = c.nid ORDER BY c.due, c.id"
             ).fetchall()
