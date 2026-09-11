@@ -1,7 +1,12 @@
 import hmac
+import io
+import json
 import os
 import re
 import secrets
+import sqlite3
+import tempfile
+import zipfile
 from datetime import datetime, time, timedelta
 from functools import wraps
 from html import escape
@@ -9,6 +14,7 @@ from html.parser import HTMLParser
 from ipaddress import ip_address
 
 from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
+from werkzeug.utils import secure_filename
 from markupsafe import Markup
 from werkzeug.security import check_password_hash
 from extensions import db
@@ -28,7 +34,7 @@ ADMIN_PASSWORD_HASH = "scrypt:32768:8:1$AZoWWcB3tzxYAVCu$63fafb5009397187f33e0a3
 
 db.init_app(app)
 
-from models import Visitor, Post, LearningCategory, LearningEntry, LoginAttempt, BlockedIP
+from models import Visitor, Post, LearningCategory, LearningEntry, LoginAttempt, BlockedIP, FlashcardDeck, Flashcard, JST
 
 
 class LearningHtmlSanitizer(HTMLParser):
@@ -105,6 +111,65 @@ def sanitize_learning_html(value):
     return sanitizer.result()
 
 
+def cleanup_expired_visitors():
+    """Keep access logs for the last rolling 72 hours only."""
+    cutoff = datetime.now(JST).replace(tzinfo=None) - timedelta(days=3)
+    return Visitor.query.filter(Visitor.visited_at < cutoff).delete(synchronize_session=False)
+
+
+def read_anki_package(upload):
+    """Read front/back fields from an .apkg without extracting its contents."""
+    if not upload or not upload.filename:
+        raise ValueError("An Anki .apkg file is required.")
+    if not upload.filename.lower().endswith(".apkg"):
+        raise ValueError("Only .apkg Anki package files can be uploaded.")
+
+    package_bytes = upload.read()
+    if len(package_bytes) > 10 * 1024 * 1024:
+        raise ValueError("The Anki package must be 10 MB or smaller.")
+    try:
+        archive = zipfile.ZipFile(io.BytesIO(package_bytes))
+        database_name = next(
+            name for name in archive.namelist()
+            if name in {"collection.anki2", "collection.anki21"}
+        )
+        database_bytes = archive.read(database_name)
+    except (StopIteration, zipfile.BadZipFile, KeyError):
+        raise ValueError("This does not appear to be a valid Anki package.")
+
+    with tempfile.NamedTemporaryFile(suffix=".anki", delete=False) as temp_file:
+        temp_file.write(database_bytes)
+        database_path = temp_file.name
+    try:
+        connection = sqlite3.connect(f"file:{database_path}?mode=ro", uri=True)
+        try:
+            deck_names = {}
+            row = connection.execute("SELECT decks FROM col LIMIT 1").fetchone()
+            if row:
+                deck_names = {int(deck_id): data.get("name", "Untitled deck") for deck_id, data in json.loads(row[0]).items()}
+            rows = connection.execute(
+                "SELECT c.did, n.flds, c.due FROM cards c JOIN notes n ON n.id = c.nid ORDER BY c.due, c.id"
+            ).fetchall()
+        finally:
+            connection.close()
+    except (sqlite3.Error, json.JSONDecodeError) as exc:
+        raise ValueError("The Anki package could not be read.") from exc
+    finally:
+        os.unlink(database_path)
+
+    cards_by_deck = {}
+    for deck_id, fields, due in rows:
+        front, *remaining = fields.split("\x1f")
+        back = remaining[0] if remaining else ""
+        if front.strip() and back.strip():
+            cards_by_deck.setdefault(deck_names.get(deck_id, "Untitled deck"), []).append((front, back, due))
+    if not cards_by_deck:
+        raise ValueError("No cards with both front and back fields were found.")
+    if sum(len(cards) for cards in cards_by_deck.values()) > 10000:
+        raise ValueError("An Anki package can contain up to 10,000 cards.")
+    return cards_by_deck
+
+
 @app.template_filter("learning_html")
 def learning_html(value):
     return Markup(sanitize_learning_html(value))
@@ -126,6 +191,8 @@ def reject_blocked_ip():
         return None
     if BlockedIP.query.filter_by(ip=request_ip()).first():
         return render_template("blocked.html"), 403
+    if cleanup_expired_visitors():
+        db.session.commit()
     return None
 
 
@@ -220,9 +287,7 @@ def mask_ip(value):
 
 @app.route("/")
 def home():
-
     visitor_ip = request_ip()
-
     visitor = Visitor(
         ip=visitor_ip,
         page=request.path,
@@ -257,6 +322,58 @@ def home():
         today_visitors=today_visitors,
         total_visitors=total_visitors
     )
+
+
+@app.route("/flashcards")
+def flashcards():
+    decks = FlashcardDeck.query.order_by(FlashcardDeck.created_at.desc()).all()
+    return render_template("flashcards.html", decks=decks)
+
+
+@app.route("/flashcards/upload", methods=["POST"])
+@admin_required
+def upload_flashcards():
+    validate_csrf()
+    try:
+        cards_by_deck = read_anki_package(request.files.get("anki_file"))
+        source_filename = secure_filename(request.files["anki_file"].filename) or "anki-deck.apkg"
+        imported_count = 0
+        for name, cards in cards_by_deck.items():
+            deck = FlashcardDeck(name=name[:200], source_filename=source_filename)
+            db.session.add(deck)
+            db.session.flush()
+            for position, (front, back, _) in enumerate(cards, start=1):
+                db.session.add(Flashcard(
+                    deck=deck,
+                    front=sanitize_learning_html(front),
+                    back=sanitize_learning_html(back),
+                    position=position,
+                ))
+            imported_count += len(cards)
+        db.session.commit()
+        flash(f"Imported {imported_count} flashcards.")
+    except ValueError as exc:
+        db.session.rollback()
+        flash(str(exc))
+    return redirect(url_for("flashcards"))
+
+
+@app.route("/flashcards/<int:deck_id>")
+def study_flashcards(deck_id):
+    deck = FlashcardDeck.query.get_or_404(deck_id)
+    cards = Flashcard.query.filter_by(deck_id=deck.id).order_by(Flashcard.position).all()
+    return render_template("flashcard_study.html", deck=deck, cards=cards)
+
+
+@app.route("/flashcards/<int:deck_id>/delete", methods=["POST"])
+@admin_required
+def delete_flashcard_deck(deck_id):
+    validate_csrf()
+    deck = FlashcardDeck.query.get_or_404(deck_id)
+    db.session.delete(deck)
+    db.session.commit()
+    flash("Flashcard deck deleted.")
+    return redirect(url_for("flashcards"))
 
 
 @app.route("/learning/categories", methods=["POST"])

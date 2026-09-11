@@ -18,6 +18,26 @@ class Visitor(db.Model):
         return f"<Visitor {self.ip}>"
 
 
+class FlashcardDeck(db.Model):
+    __tablename__ = "flashcard_decks"
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    source_filename = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(JST), nullable=False)
+    cards = db.relationship("Flashcard", backref="deck", cascade="all, delete-orphan", lazy=True)
+
+
+class Flashcard(db.Model):
+    __tablename__ = "flashcards"
+
+    id = db.Column(db.Integer, primary_key=True)
+    deck_id = db.Column(db.Integer, db.ForeignKey("flashcard_decks.id"), nullable=False, index=True)
+    front = db.Column(db.Text, nullable=False)
+    back = db.Column(db.Text, nullable=False)
+    position = db.Column(db.Integer, nullable=False, default=0)
+
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)

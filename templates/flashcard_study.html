@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="ko">
+  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>{{ deck.name }} — Flashcards</title><link rel="preconnect" href="https://fonts.googleapis.com" /><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet" /><link rel="stylesheet" href="/static/css/style.css" /></head>
+  <body><main class="flashcard-page wrap"><a class="board-back" href="{{ url_for('flashcards') }}">← All decks</a><header class="learning-board-header"><span class="sec-num">{{ cards|length }} CARDS</span><h1>{{ deck.name }}</h1><p>Tap the card or press Space to reveal the answer.</p></header>
+    {% if cards %}<section class="study-area"><button id="studyCard" class="study-card" type="button" aria-label="Reveal answer"><span id="cardSide">QUESTION</span><div id="cardContent" class="study-card-content">{{ cards[0].front|learning_html }}</div><small id="cardHint">Click to reveal answer</small></button><div class="study-controls"><button class="btn btn-ghost" id="previousCard" type="button">← Previous</button><span id="cardProgress">1 / {{ cards|length }}</span><button class="btn btn-primary" id="nextCard" type="button">Next →</button></div></section>
+    <script id="flashcardData" type="application/json">[{% for card in cards %}{{ {'front': card.front, 'back': card.back}|tojson }}{% if not loop.last %},{% endif %}{% endfor %}]</script><script src="/static/js/flashcards.js"></script>
+    {% else %}<p class="learning-empty-state">This deck contains no cards.</p>{% endif %}</main></body>
+</html>
