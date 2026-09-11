@@ -549,6 +549,22 @@ def delete_flashcard_deck(deck_id):
     flash("Flashcard deck deleted.")
     return redirect(url_for("flashcards"))
 
+@app.route("/flashcards/delete-selected", methods=["POST"])
+@admin_required
+def delete_selected_flashcard_decks():
+    validate_csrf()
+    deck_ids = [int(value) for value in request.form.getlist("deck_ids") if value.isdigit()]
+    if not deck_ids:
+        flash("삭제할 덱을 선택해주세요.")
+        return redirect(url_for("flashcards"))
+    decks = FlashcardDeck.query.filter(FlashcardDeck.id.in_(deck_ids)).all()
+    count = len(decks)
+    for deck in decks:
+        db.session.delete(deck)
+    db.session.commit()
+    flash(f"{count}개의 덱을 삭제했습니다.")
+    return redirect(url_for("flashcards"))
+
 
 @app.route("/learning/categories", methods=["POST"])
 @admin_required

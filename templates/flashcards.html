@@ -42,59 +42,81 @@
         </button>
       </form>
       {% endif %} {% if decks %}
-      <div class="deck-browser">
-        <label class="deck-search-label" for="deckSearch">FIND A DECK</label>
-        <input
-          id="deckSearch"
-          class="deck-search"
-          type="search"
-          placeholder="덱 이름 또는 파일명으로 검색"
-          autocomplete="off"
-        />
-        <span id="deckSearchSummary" class="deck-search-summary"
-          >{{ decks|length }} decks</span
-        >
-      </div>
+      <form
+        id="deckBulkDeleteForm"
+        method="POST"
+        action="{{ url_for('delete_selected_flashcard_decks') }}"
+      >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        {% if is_admin %}
+        <div id="deckBulkBar" class="deck-bulk-bar" hidden>
+          <span id="deckBulkCount">0개 선택</span>
+          <button type="submit" class="btn btn-danger" id="deckBulkDeleteBtn">
+            선택 삭제
+          </button>
+          <button type="button" class="btn btn-ghost" id="deckBulkCancel">
+            선택 취소
+          </button>
+        </div>
+        {% endif %}
+
+        <div class="deck-browser">
+          <label class="deck-search-label" for="deckSearch">FIND A DECK</label>
+          <input
+            id="deckSearch"
+            class="deck-search"
+            type="search"
+            placeholder="덱 이름 또는 파일명으로 검색"
+            autocomplete="off"
+          />
+          <span id="deckSearchSummary" class="deck-search-summary"
+            >{{ decks|length }} decks</span
+          >
+        </div>
+
+        <section class="flashcard-deck-list">
+          {% for deck in decks %}
+          <article
+            class="flashcard-deck"
+            data-deck-id="{{ deck.id }}"
+            data-card-ids="{{ deck.cards|map(attribute='id')|join(',') }}"
+            data-search-text="{{ (flashcard_deck_name(deck) ~ ' ' ~ deck.source_filename)|lower }}"
+          >
+            {% if is_admin %}
+            <label class="deck-select">
+              <input
+                type="checkbox"
+                name="deck_ids"
+                value="{{ deck.id }}"
+                class="deck-select-input"
+              />
+            </label>
+            {% endif %}
+            
+              class="deck-title-link"
+              href="{{ url_for('study_flashcards', deck_id=deck.id) }}"
+            >
+              <span class="sec-num">{{ deck.cards|length }} CARDS</span>
+              <h2>
+                {{ flashcard_deck_name(deck)[:6] }}{% if
+                flashcard_deck_name(deck)|length > 6 %}…{% endif %}
+              </h2>
+              <span class="deck-progress">
+                <span class="deck-progress-known">0</span>/<span
+                  class="deck-progress-total"
+                  >{{ deck.cards|length }}</span
+                >
+              </span>
+            </a>
+          </article>
+          {% else %}
+          <p class="learning-empty-state">No decks imported yet.</p>
+          {% endfor %}
+        </section>
+      </form>
       {% endif %}
-      <section class="flashcard-deck-list">
-        {% for deck in decks %}
-        <article
-          class="flashcard-deck"
-          data-deck-id="{{ deck.id }}"
-          data-card-ids="{{ deck.cards|map(attribute='id')|join(',') }}"
-          data-search-text="{{ (flashcard_deck_name(deck) ~ ' ' ~ deck.source_filename)|lower }}"
-        >
-          <a
-            class="deck-title-link"
-            href="{{ url_for('study_flashcards', deck_id=deck.id) }}"
-          >
-            <span class="sec-num">{{ deck.cards|length }} CARDS</span>
-            <h2>
-              {{ flashcard_deck_name(deck)[:6] }}{% if
-              flashcard_deck_name(deck)|length > 6 %}…{% endif %}
-            </h2>
-            <span class="deck-progress">
-              <span class="deck-progress-known">0</span>/<span
-                class="deck-progress-review"
-                >{{ deck.cards|length }}</span
-              >
-            </span>
-          </a>
-          {% if is_admin %}
-          <form
-            method="POST"
-            action="{{ url_for('delete_flashcard_deck', deck_id=deck.id) }}"
-          >
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <button class="btn btn-danger" type="submit">Delete</button>
-          </form>
-          {% endif %}
-        </article>
-        {% else %}
-        <p class="learning-empty-state">No decks imported yet.</p>
-        {% endfor %}
-      </section>
     </main>
     <script src="/static/js/flashcard-progress.js"></script>
+    <script src="/static/js/flashcard-bulk-delete.js"></script>
   </body>
 </html>
