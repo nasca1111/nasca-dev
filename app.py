@@ -191,6 +191,18 @@ def replace_anki_media(content, media_urls):
     )
 
 
+def decode_anki_text(value):
+    """Read older Anki exports that contain non-UTF-8 media names or fields."""
+    if isinstance(value, str):
+        return value
+    for encoding in ("utf-8-sig", "utf-8", "cp949", "shift_jis", "cp1252"):
+        try:
+            return value.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    return value.decode("utf-8", errors="replace")
+
+
 def read_anki_package(upload):
     """Read front/back fields from an .apkg without extracting its contents."""
     if not upload or not upload.filename:
@@ -210,14 +222,14 @@ def read_anki_package(upload):
             database_bytes = archive.read(database_name)
             media_files = {}
             try:
-                media_index = json.loads(archive.read("media"))
+                media_index = json.loads(decode_anki_text(archive.read("media")))
                 total_media_size = 0
                 for archive_name, original_name in media_index.items():
                     data = archive.read(str(archive_name))
                     total_media_size += len(data)
                     if total_media_size > 80 * 1024 * 1024:
                         raise ValueError("The package media must be 80 MB or smaller.")
-                    media_files[original_name] = data
+                    media_files[decode_anki_text(original_name)] = data
             except KeyError:
                 pass
     except (StopIteration, zipfile.BadZipFile, KeyError):
@@ -229,11 +241,15 @@ def read_anki_package(upload):
     try:
         connection = sqlite3.connect(f"file:{database_path}?mode=ro", uri=True)
         try:
+            connection.text_factory = bytes
             deck_names, models = {}, {}
             row = connection.execute("SELECT decks, models FROM col LIMIT 1").fetchone()
             if row:
-                deck_names = {int(deck_id): data.get("name", "Untitled deck") for deck_id, data in json.loads(row[0]).items()}
-                models = json.loads(row[1])
+                deck_names = {
+                    int(deck_id): decode_anki_text(data.get("name", "Untitled deck"))
+                    for deck_id, data in json.loads(decode_anki_text(row[0])).items()
+                }
+                models = json.loads(decode_anki_text(row[1]))
             rows = connection.execute(
                 "SELECT c.did, n.flds, n.mid, c.ord, c.due FROM cards c JOIN notes n ON n.id = c.nid ORDER BY c.due, c.id"
             ).fetchall()
@@ -246,7 +262,7 @@ def read_anki_package(upload):
 
     cards_by_deck = {}
     for deck_id, fields, model_id, ordinal, due in rows:
-        values = fields.split("\x1f")
+        values = decode_anki_text(fields).split("\x1f")
         model = models.get(str(model_id), {})
         templates = model.get("tmpls", [])
         if ordinal < len(templates):

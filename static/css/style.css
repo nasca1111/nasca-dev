@@ -2016,3 +2016,170 @@ footer p {
     opacity: 0.6;
   }
 }
+
+/* Flashcard pages: compact, touch-friendly layout for phones. */
+@media (max-width: 700px) {
+  .flashcard-page {
+    padding-top: 24px;
+    padding-bottom: 40px;
+  }
+
+  .flashcard-page .board-back {
+    display: inline-block;
+    margin-bottom: 22px;
+  }
+
+  .flashcard-page .learning-board-header h1 {
+    font-size: clamp(28px, 9vw, 40px);
+    overflow-wrap: anywhere;
+  }
+
+  .flashcard-page .learning-board-header p {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .flashcard-upload,
+  .flashcard-deck {
+    padding: 16px;
+    margin: 16px 0;
+  }
+
+  .flashcard-upload {
+    align-items: stretch;
+  }
+
+  .flashcard-upload label,
+  .flashcard-upload input {
+    width: 100%;
+  }
+
+  .flashcard-upload .btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .flashcard-deck {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .flashcard-deck h2 {
+    font-size: 17px;
+    overflow-wrap: anywhere;
+  }
+
+  .flashcard-deck-actions {
+    width: 100%;
+  }
+
+  .flashcard-deck-actions .btn {
+    justify-content: center;
+    flex: 1;
+    padding: 11px 12px;
+  }
+
+  .flashcard-deck-actions form {
+    flex: 1;
+  }
+
+  .flashcard-deck-actions form .btn {
+    width: 100%;
+  }
+
+  .study-area {
+    margin: 18px 0;
+  }
+
+  .study-filter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .study-filter .btn {
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+
+  .study-card {
+    min-height: min(54vh, 430px);
+    padding: 22px 18px;
+  }
+
+  .study-card-content {
+    font-size: clamp(18px, 5.5vw, 22px);
+    line-height: 1.55;
+    margin-top: 26px;
+  }
+
+  .study-card-content img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 42vh;
+    margin: 0 auto;
+    object-fit: contain;
+  }
+
+  .study-card-content audio {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .study-card-content table {
+    display: block;
+    overflow-x: auto;
+    font-size: 15px;
+  }
+
+  .study-controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .study-controls .btn {
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+
+  .study-controls span {
+    font-size: 10px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .study-status {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .study-status .btn {
+    justify-content: center;
+    min-height: 46px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 380px) {
+  .study-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .study-controls span {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .study-controls .btn {
+    grid-row: 2;
+  }
+}
