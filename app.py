@@ -225,6 +225,9 @@ def decompress_anki21b(data):
         raise ValueError("The Anki collection data must be 100 MB or smaller.")
     return unpacked
 
+def strip_frontside_echo(afmt):
+    """Anki remove question echo on answer template."""
+    return re.sub(r'^\s*\{\{FrontSide\}\}\s*(<hr[^>]*>)?\s*', '', afmt, flags=re.IGNORECASE)
 
 def read_anki_package(upload):
     """Read front/back fields from an .apkg without extracting its contents."""
@@ -303,7 +306,8 @@ def read_anki_package(upload):
         if ordinal < len(templates):
             field_definitions = model.get("flds", [])
             question_template = {"format": templates[ordinal].get("qfmt", ""), "fields": field_definitions, "ordinal": ordinal}
-            answer_template = {"format": templates[ordinal].get("afmt", ""), "fields": field_definitions, "ordinal": ordinal, "answer": True}
+            answer_format = strip_frontside_echo(templates[ordinal].get("afmt", ""))
+            answer_template = {"format": answer_format, "fields": field_definitions, "ordinal": ordinal, "answer": True}
             front = render_anki_template(question_template, values)
             back = render_anki_template(answer_template, values, front)
         else:
