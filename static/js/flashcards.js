@@ -94,9 +94,9 @@
         item.id === currentCard().id
           ? "now"
           : cardStatus(item) === "unknown"
-            ? "review"
+            ? "fail"
             : cardStatus(item) === "known"
-              ? "known"
+              ? "pass"
               : "new";
       button.dataset.status = state;
       button.innerHTML = `<span>${state.toUpperCase()}</span><strong>${preview(item.front)}</strong>`;

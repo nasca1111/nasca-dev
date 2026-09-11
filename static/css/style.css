@@ -2410,22 +2410,25 @@ footer p {
 }
 .card-picker-item[data-status="now"] span {
   background: var(--bg, #0b0b0b);
+  color: var(--accent, #4da3ff);
 }
 
-.card-picker-item[data-status="review"] {
+.card-picker-item[data-status="fail"] {
   border-left-color: var(--alert, #e0555a);
   color: var(--alert, #e0555a);
 }
-.card-picker-item[data-status="review"] span {
+.card-picker-item[data-status="fail"] span {
   background: var(--bg, #0b0b0b);
+  color: var(--alert, #e0555a);
 }
 
-.card-picker-item[data-status="known"] {
+.card-picker-item[data-status="pass"] {
   border-left-color: var(--green, #3fae6a);
   color: var(--green, #3fae6a);
 }
-.card-picker-item[data-status="known"] span {
+.card-picker-item[data-status="pass"] span {
   background: var(--bg, #0b0b0b);
+  color: var(--green, #3fae6a);
 }
 
 .card-picker-item[data-status="new"] {
@@ -2434,4 +2437,5 @@ footer p {
 }
 .card-picker-item[data-status="new"] span {
   background: var(--bg, #0b0b0b);
+  color: white;
 }
