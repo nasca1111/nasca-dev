@@ -244,14 +244,135 @@ h1 {
 }
 
 /* ---------- flashcards ---------- */
-.flashcard-page { padding-top: 42px; padding-bottom: 64px; }
-.flashcard-upload, .flashcard-deck { border: 1px solid var(--line); background: var(--paper-alt); padding: 20px; border-radius: 4px; margin: 24px 0; }
-.flashcard-upload { display: flex; align-items: end; gap: 16px; flex-wrap: wrap; }
-.flashcard-upload label { font: 12px var(--mono); color: var(--ink-soft); display: grid; gap: 8px; }
-.flashcard-upload input { color: var(--ink); font: 13px var(--mono); }
-.flashcard-deck { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
-.flashcard-deck h2 { font-family: var(--mono); margin: 4px 0; font-size: 20px; }.flashcard-deck p { color: var(--ink-faint); font-size: 13px; }.flashcard-deck .deck-progress { color: var(--green); margin-bottom: 5px; }.flashcard-deck-actions { display: flex; gap: 10px; align-items: center; }.flashcard-deck-actions form { margin: 0; }
-.study-area { max-width: 760px; margin: 24px auto; }.study-filter { display: flex; gap: 10px; margin-bottom: 14px; }.study-filter .is-active { background: var(--ink); color: var(--black); }.study-card { display: block; width: 100%; min-height: 330px; padding: 34px; color: var(--ink); background: var(--black); border: 1px solid var(--line); border-radius: 6px; cursor: pointer; text-align: left; }.study-card.is-answer { border-color: var(--green); }.study-card.is-known { box-shadow: inset 0 0 0 1px rgb(17 255 0 / 30%); }.study-card > span, .study-card small { display: block; font: 12px var(--mono); color: var(--green); letter-spacing: .08em; }.study-card small { color: var(--ink-faint); margin-top: 26px; }.study-card-content { font-size: 22px; margin-top: 38px; overflow-wrap: anywhere; }.study-card-content table { max-width: 100%; border-collapse: collapse; }.study-card-content td, .study-card-content th { border: 1px solid var(--line); padding: 8px; }.study-controls, .study-status { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }.study-controls span, .study-status span { font: 13px var(--mono); }.study-status { border-top: 1px solid var(--line); padding-top: 16px; }.study-status span { color: var(--ink-soft); }
+.flashcard-page {
+  padding-top: 42px;
+  padding-bottom: 64px;
+}
+.flashcard-upload,
+.flashcard-deck {
+  border: 1px solid var(--line);
+  background: var(--paper-alt);
+  padding: 20px;
+  border-radius: 4px;
+  margin: 24px 0;
+}
+.flashcard-upload {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.flashcard-upload label {
+  font: 12px var(--mono);
+  color: var(--ink-soft);
+  display: grid;
+  gap: 8px;
+}
+.flashcard-upload input {
+  color: var(--ink);
+  font: 13px var(--mono);
+}
+.flashcard-deck {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+.flashcard-deck h2 {
+  font-family: var(--mono);
+  margin: 4px 0;
+  font-size: 20px;
+}
+.flashcard-deck p {
+  color: var(--ink-faint);
+  font-size: 13px;
+}
+.flashcard-deck .deck-progress {
+  color: var(--green);
+  margin-bottom: 5px;
+}
+.flashcard-deck-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.flashcard-deck-actions form {
+  margin: 0;
+}
+.study-area {
+  max-width: 760px;
+  margin: 24px auto;
+}
+.study-filter {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.study-filter .is-active {
+  background: var(--ink);
+  color: var(--black);
+}
+.study-card {
+  display: block;
+  width: 100%;
+  min-height: 330px;
+  padding: 34px;
+  color: var(--ink);
+  background: var(--black);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+}
+.study-card.is-answer {
+  border-color: var(--green);
+}
+.study-card.is-known {
+  box-shadow: inset 0 0 0 1px rgb(17 255 0 / 30%);
+}
+.study-card > span,
+.study-card small {
+  display: block;
+  font: 12px var(--mono);
+  color: var(--green);
+  letter-spacing: 0.08em;
+}
+.study-card small {
+  color: var(--ink-faint);
+  margin-top: 26px;
+}
+.study-card-content {
+  font-size: 22px;
+  margin-top: 38px;
+  overflow-wrap: anywhere;
+}
+.study-card-content table {
+  max-width: 100%;
+  border-collapse: collapse;
+}
+.study-card-content td,
+.study-card-content th {
+  border: 1px solid var(--line);
+  padding: 8px;
+}
+.study-controls,
+.study-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+.study-controls span,
+.study-status span {
+  font: 13px var(--mono);
+}
+.study-status {
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.study-status span {
+  color: var(--ink-soft);
+}
 
 .admin-actions {
   display: flex;
@@ -2107,7 +2228,12 @@ footer p {
   }
 
   .study-card {
-    min-height: min(54vh, 430px);
+    min-height: min(54vh, 330px);
+    padding: 22px 18px;
+  }
+
+  .study-card-answer {
+    min-height: min(54vh, 130px);
     padding: 22px 18px;
   }
 
