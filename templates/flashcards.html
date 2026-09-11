@@ -42,12 +42,20 @@
         </button>
       </form>
       {% endif %}
+      {% if decks %}
+      <div class="deck-browser">
+        <label class="deck-search-label" for="deckSearch">FIND A DECK</label>
+        <input id="deckSearch" class="deck-search" type="search" placeholder="덱 이름 또는 파일명으로 검색" autocomplete="off" />
+        <span id="deckSearchSummary" class="deck-search-summary">{{ decks|length }} decks</span>
+      </div>
+      {% endif %}
       <section class="flashcard-deck-list">
         {% for deck in decks %}
         <article
           class="flashcard-deck"
           data-deck-id="{{ deck.id }}"
           data-card-ids="{{ deck.cards|map(attribute='id')|join(',') }}"
+          data-search-text="{{ (flashcard_deck_name(deck) ~ ' ' ~ deck.source_filename)|lower }}"
         >
           <div>
             <span class="sec-num">{{ deck.cards|length }} CARDS</span>
