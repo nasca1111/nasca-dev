@@ -56,6 +56,7 @@
             {% else %}
             <a class="btn btn-ghost" href="{{ url_for('login', next=request.path) }}">Login</a>
             {% endif %}
+            <a class="btn btn-primary" href="{{ url_for('flashcards') }}">Study Flashcards →</a>
             <div class="hero-posts">
               <div class="hero-posts-head">
                 <span>PERSONAL LOG</span>
