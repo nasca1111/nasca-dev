@@ -72,24 +72,6 @@
         </div>
         {% endif %}
 
-        <div class="deck-browser">
-          <label class="deck-search-label" for="deckSearch">
-            FIND A DECK
-          </label>
-
-          <input
-            id="deckSearch"
-            class="deck-search"
-            type="search"
-            placeholder="덱 이름 또는 파일명으로 검색"
-            autocomplete="off"
-          />
-
-          <span id="deckSearchSummary" class="deck-search-summary">
-            {{ decks|length }} decks
-          </span>
-        </div>
-
         <section class="flashcard-deck-list">
           {% for deck in decks %}
 
