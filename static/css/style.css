@@ -2405,30 +2405,33 @@ footer p {
 
 /* 상태별 색상 구분 — REVIEW는 다시 볼 문제라 경고색, KNOWN은 초록, NOW는 강조색 */
 .card-picker-item[data-status="now"] {
-  border-left-color: var(--accent, #4da3ff);
-  color: var(--accent, #4da3ff);
+  border-left-color: var(--accent, #00d5ff);
+  color: var(--accent, #00d5ff);
 }
 .card-picker-item[data-status="now"] span {
   background: var(--bg, #0b0b0b);
-  color: var(--accent, #4da3ff);
+  color: var(--accent, #00d5ff);
+  border: 1px solid var(--accent, #00d5ff);
 }
 
 .card-picker-item[data-status="fail"] {
-  border-left-color: var(--alert, #e0555a);
-  color: var(--alert, #e0555a);
+  border-left-color: var(--alert, #ff0000);
+  color: var(--alert, #ff0000);
 }
 .card-picker-item[data-status="fail"] span {
   background: var(--bg, #0b0b0b);
-  color: var(--alert, #e0555a);
+  color: var(--alert, #ff0000);
+  border: 1px solid var(--alert, #ff0000);
 }
 
 .card-picker-item[data-status="pass"] {
-  border-left-color: var(--green, #3fae6a);
-  color: var(--green, #3fae6a);
+  border-left-color: var(--green, #11ff00);
+  color: var(--green, #11ff00);
 }
 .card-picker-item[data-status="pass"] span {
   background: var(--bg, #0b0b0b);
-  color: var(--green, #3fae6a);
+  color: var(--green, #11ff00);
+  border: 1px solid var(--green, #11ff00);
 }
 
 .card-picker-item[data-status="new"] {
@@ -2438,4 +2441,5 @@ footer p {
 .card-picker-item[data-status="new"] span {
   background: var(--bg, #0b0b0b);
   color: white;
+  border: 1px solid var(--border, #333);
 }
