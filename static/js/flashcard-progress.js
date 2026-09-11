@@ -12,8 +12,7 @@
     const ids = deck.dataset.cardIds ? deck.dataset.cardIds.split(",") : [];
     const knownCount = ids.filter((id) => known[id]).length;
     deck.querySelector(".deck-progress-known").textContent = knownCount;
-    deck.querySelector(".deck-progress-review").textContent =
-      ids.length - knownCount;
+    deck.querySelector(".deck-progress-review").textContent = ids.length;
   });
 })();
 

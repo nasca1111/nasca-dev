@@ -2521,8 +2521,8 @@ footer p {
 .deck-progress-known {
   color: var(--green, #3fae6a);
 }
-.deck-progress-review {
-  color: var(--alert, #e0555a);
+.deck-progress-total {
+  color: var(--muted, #888);
 }
 
 .flashcard-deck-actions,
