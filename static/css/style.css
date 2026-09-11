@@ -2458,19 +2458,28 @@ footer p {
 }
 
 .flashcard-deck-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (min-width: 480px) {
+  .flashcard-deck-list {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+@media (min-width: 768px) {
+  .flashcard-deck-list {
+    grid-template-columns: repeat(6, 1fr);
+  }
 }
 
 .flashcard-deck {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 6px 14px;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 12px 10px;
   border: 1px solid var(--border, #2a2a2a);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--panel, #111);
   transition:
     border-color 0.15s,
@@ -2481,48 +2490,43 @@ footer p {
   background: var(--panel-hover, #1a1a1a);
 }
 
-.flashcard-deck > div {
+.deck-title-link {
   display: flex;
-  align-items: baseline;
-  gap: 10px;
-  min-width: 0; /* 텍스트 말줄임 처리 위해 필요 */
-  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
 }
 
 .flashcard-deck .sec-num {
-  flex: 0 0 auto;
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   color: var(--muted, #888);
 }
 
-.deck-title-link {
-  min-width: 0;
-  flex: 0 1 auto;
-}
 .deck-title-link h2 {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 500;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .deck-progress {
-  flex: 0 0 auto;
   font-family: "JetBrains Mono", monospace;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.02em;
 }
-
 .deck-progress-known {
-  color: var(--green, #11ff00);
+  color: var(--green, #3fae6a);
 }
 .deck-progress-review {
-  color: var(--alert, #ff0000);
+  color: var(--alert, #e0555a);
 }
 
-.flashcard-deck-actions {
-  flex: 0 0 auto;
+.flashcard-deck-actions,
+.flashcard-deck form {
+  margin-top: 6px;
+  text-align: center;
 }
