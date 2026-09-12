@@ -72,7 +72,10 @@ if (modal && openBtn && closeBtn) {
   });
 
   writeForm.addEventListener("submit", (event) => {
-    if (writeForm.action.includes("/edit") && !window.confirm("Save the changes to this entry?")) {
+    if (
+      writeForm.action.includes("/edit") &&
+      !window.confirm("Save the changes to this entry?")
+    ) {
       event.preventDefault();
     }
   });

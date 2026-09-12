@@ -17,7 +17,7 @@
 
   cancelBtn.addEventListener("click", () => {
     checkboxes().forEach((cb) => {
-      cb.style.display = "block";
+      cb.closest(".deck-select").style.display = "block";
     });
     refresh();
   });
