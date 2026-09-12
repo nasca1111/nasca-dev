@@ -64,6 +64,14 @@
   }
 
   function showCompleteMessage() {
+    const knownCount = cards.filter(
+      (item) => cardStatus(item) === "known",
+    ).length;
+
+    const unknownCount = cards.filter(
+      (item) => cardStatus(item) === "unknown",
+    ).length;
+
     question.innerHTML = `
     <div class="flashcard-complete">
       <h2>🎉 문제를 모두 풀었습니다!</h2>
