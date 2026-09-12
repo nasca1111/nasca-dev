@@ -244,7 +244,7 @@
     ).length;
 
     question.innerHTML = `
-      <div class="wrap">
+      <div class="study-area">
         <h2>🎉 문제를 모두 풀었습니다!</h2>
 
         <p>
@@ -271,7 +271,7 @@
         <button
           type="button"
           id="restartCards"
-          class="btn btn-green"
+          class="btn btn-ghost"
         >
           처음부터 다시 보기
         </button>
@@ -282,7 +282,7 @@
               <button
                 type="button"
                 id="reviewUnknown"
-                class="btn btn-green"
+                class="btn btn-ghost"
               >
                 틀린 문제 다시 풀기
               </button>
