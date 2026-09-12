@@ -101,7 +101,7 @@
     document.getElementById("restartCards").addEventListener("click", () => {
       index = 0;
       showingAnswer = false;
-      moveToNext();
+      render();
     });
   }
 
