@@ -36,16 +36,12 @@
 
   const card = document.getElementById("studyCard");
   const question = document.getElementById("cardContent");
-
   const answer = document.getElementById("answerContent");
   const answerPanel = document.getElementById("answerPanel");
-
   const hint = document.getElementById("cardHint");
   const progress = document.getElementById("cardProgress");
-
   const status = document.getElementById("knowledgeStatus");
   const catalog = document.getElementById("cardCatalog");
-
   const picker = document.getElementById("cardPicker");
   const catalogLabel = document.getElementById("catalogLabel");
   const catalogCount = document.getElementById("catalogCount");
@@ -69,6 +65,36 @@
       .trim()
       .replace(/\s+/g, " ")
       .slice(0, 110);
+  }
+
+  // 일반 학습 버튼 스타일
+  function setStudyButtons() {
+    unknownButton.className = "btn btn-danger";
+    knownButton.className = "btn btn-green";
+
+    unknownButton.textContent = "Fail";
+    knownButton.textContent = "Pass";
+
+    unknownButton.disabled = false;
+    knownButton.disabled = false;
+
+    unknownCardMode = "unknown";
+    knownCardMode = "known";
+  }
+
+  // 완료 화면 버튼 스타일
+  function setCompleteButtons(unknownCount) {
+    unknownButton.className = "btn btn-ghost";
+    knownButton.className = "btn btn-ghost";
+
+    unknownButton.textContent = "Restart";
+    knownButton.textContent = "Review";
+
+    unknownButton.disabled = false;
+    knownButton.disabled = unknownCount === 0;
+
+    unknownCardMode = "restart";
+    knownCardMode = "review";
   }
 
   function render() {
@@ -98,21 +124,10 @@
     }`;
 
     card.classList.toggle("is-answer", showingAnswer);
-
     card.classList.toggle("is-known", state === "known");
 
-    // 일반 학습 화면에서는 Fail / Pass로 표시
-    unknownButton.textContent = "Fail";
-    knownButton.textContent = "Pass";
-
-    unknownButton.classList.remove("btn", "btn-ghost");
-    knownButton.classList.remove("btn", "btn-ghost");
-
-    unknownButton.disabled = false;
-    knownButton.disabled = false;
-
-    unknownCardMode = "unknown";
-    knownCardMode = "known";
+    // 일반 학습 화면
+    setStudyButtons();
   }
 
   function moveToNext() {
@@ -135,8 +150,7 @@
         studyQueueIndex++;
       }
 
-      // 여기까지 왔다는 건 선택한 위치부터 끝까지 다 푼 것
-      // 이제 배열 앞쪽으로 돌아가서 아직 안 푼 문제를 찾는다.
+      // 배열 앞쪽으로 돌아가서 아직 안 푼 문제 찾기
       studyQueueIndex = 0;
 
       while (studyQueueIndex < studyQueue.length) {
@@ -193,16 +207,11 @@
 
     showingAnswer = false;
 
-    // Fail / Pass 버튼으로 복구
-    unknownCardMode = "unknown";
-    knownCardMode = "known";
-
-    unknownButton.textContent = "Fail";
-    knownButton.textContent = "Pass";
-
-    unknownButton.disabled = false;
-    knownButton.disabled = false;
     isCompleteScreen = false;
+
+    // Fail / Pass로 복구
+    setStudyButtons();
+
     render();
   }
 
@@ -248,18 +257,9 @@
 
     card.classList.remove("is-answer", "is-known");
 
-    // 복습 완료 화면에서도 버튼을 Restart / Review로 변경
-    unknownCardMode = "restart";
-    knownCardMode = "review";
+    // Restart / Review 버튼으로 변경
+    setCompleteButtons(unknownCount);
 
-    unknownButton.textContent = "Restart";
-    knownButton.textContent = "Review";
-
-    unknownButton.classList.add("btn", "btn-ghost");
-    knownButton.classList.add("btn", "btn-ghost");
-
-    // 아직 틀린 문제가 없으면 Review 비활성화
-    knownButton.disabled = unknownCount === 0;
     isCompleteScreen = true;
   }
 
@@ -296,18 +296,9 @@
 
     card.classList.remove("is-answer", "is-known");
 
-    // 기존 Fail / Pass 버튼을 Restart / Review로 변경
-    unknownCardMode = "restart";
-    knownCardMode = "review";
+    // Restart / Review 버튼으로 변경
+    setCompleteButtons(unknownCount);
 
-    unknownButton.textContent = "Restart";
-    knownButton.textContent = "Review";
-
-    unknownButton.classList.add("btn", "btn-ghost");
-    knownButton.classList.add("btn", "btn-ghost");
-
-    // 틀린 문제가 없으면 Review 비활성화
-    knownButton.disabled = unknownCount === 0;
     isCompleteScreen = true;
   }
 
@@ -324,19 +315,11 @@
 
     showingAnswer = false;
 
-    // Fail / Pass로 복구
-    unknownCardMode = "unknown";
-    knownCardMode = "known";
-
-    unknownButton.textContent = "Fail";
-    knownButton.textContent = "Pass";
-
-    unknownButton.classList.remove("btn", "btn-ghost");
-    knownButton.classList.remove("btn", "btn-ghost");
-
-    unknownButton.disabled = false;
-    knownButton.disabled = false;
     isCompleteScreen = false;
+
+    // Fail / Pass로 복구
+    setStudyButtons();
+
     render();
   }
 
@@ -476,15 +459,10 @@
 
         catalog.hidden = true;
 
-        // Fail / Pass 버튼으로 복구
-        unknownCardMode = "unknown";
-        knownCardMode = "known";
+        isCompleteScreen = false;
 
-        unknownButton.textContent = "Fail";
-        knownButton.textContent = "Pass";
-
-        unknownButton.disabled = false;
-        knownButton.disabled = false;
+        // Fail / Pass로 복구
+        setStudyButtons();
 
         render();
 
@@ -498,12 +476,14 @@
     });
   }
 
+  // 카드 클릭 → 답변 보기 / 숨기기
   card.addEventListener("click", () => {
     if (isCompleteScreen) {
       return;
     }
 
     showingAnswer = !showingAnswer;
+
     render();
   });
 
@@ -549,12 +529,12 @@
 
       card.click();
     } else if (event.key === "ArrowLeft") {
-      // 완료 화면에서는 키보드로 Fail 처리하지 않음
+      // 완료 화면에서는 Fail 처리하지 않음
       if (unknownCardMode === "unknown") {
         mark("unknown");
       }
     } else if (event.key === "ArrowRight") {
-      // 완료 화면에서는 키보드로 Pass 처리하지 않음
+      // 완료 화면에서는 Pass 처리하지 않음
       if (knownCardMode === "known") {
         mark("known");
       }
