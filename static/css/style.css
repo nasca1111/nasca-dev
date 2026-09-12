@@ -2569,6 +2569,7 @@ footer p {
 
 .completion {
   text-align: center;
+  gap: 12px;
 }
 
 .completion .stat {
