@@ -105,6 +105,9 @@
     unknownButton.textContent = "Fail";
     knownButton.textContent = "Pass";
 
+    unknownButton.classList.remove("btn", "btn-ghost");
+    knownButton.classList.remove("btn", "btn-ghost");
+
     unknownButton.disabled = false;
     knownButton.disabled = false;
 
@@ -251,6 +254,9 @@
 
     unknownButton.textContent = "Restart";
     knownButton.textContent = "Review";
+
+    unknownButton.classList.add("btn", "btn-ghost");
+    knownButton.classList.add("btn", "btn-ghost");
 
     // 아직 틀린 문제가 없으면 Review 비활성화
     knownButton.disabled = unknownCount === 0;
