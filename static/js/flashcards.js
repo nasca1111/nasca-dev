@@ -181,6 +181,9 @@
     index = (index + 1) % cards.length;
 
     showingAnswer = false;
+    if (!catalog.hidden) {
+      renderCatalog();
+    }
     render();
   }
 
@@ -315,10 +318,12 @@
     const current = currentCard();
 
     progressByCard[current.id] = state;
-
     answeredThisRound.add(current.id);
-
     save();
+
+    if (!catalog.hidden) {
+      renderCatalog();
+    }
 
     // 모르는 문제 목록에서 학습 중인 경우
     if (reviewUnknownOnly && studyQueue.length > 0) {
