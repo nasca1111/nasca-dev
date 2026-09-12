@@ -29,6 +29,10 @@
   let studyQueueIndex = 0;
   let answeredThisRound = new Set();
 
+  // Fail / Pass 버튼의 현재 역할
+  let unknownCardMode = "unknown";
+  let knownCardMode = "known";
+
   const card = document.getElementById("studyCard");
   const question = document.getElementById("cardContent");
 
@@ -44,6 +48,9 @@
   const picker = document.getElementById("cardPicker");
   const catalogLabel = document.getElementById("catalogLabel");
   const catalogCount = document.getElementById("catalogCount");
+
+  const unknownButton = document.getElementById("unknownCard");
+  const knownButton = document.getElementById("knownCard");
 
   const currentCard = () => cards[index];
 
@@ -92,6 +99,16 @@
     card.classList.toggle("is-answer", showingAnswer);
 
     card.classList.toggle("is-known", state === "known");
+
+    // 일반 학습 화면에서는 Fail / Pass로 표시
+    unknownButton.textContent = "Fail";
+    knownButton.textContent = "Pass";
+
+    unknownButton.disabled = false;
+    knownButton.disabled = false;
+
+    unknownCardMode = "unknown";
+    knownCardMode = "known";
   }
 
   function moveToNext() {
@@ -171,6 +188,17 @@
     index = cards.findIndex((item) => item.id === studyQueue[0].id);
 
     showingAnswer = false;
+
+    // Fail / Pass 버튼으로 복구
+    unknownCardMode = "unknown";
+    knownCardMode = "known";
+
+    unknownButton.textContent = "Fail";
+    knownButton.textContent = "Pass";
+
+    unknownButton.disabled = false;
+    knownButton.disabled = false;
+
     render();
   }
 
@@ -203,13 +231,6 @@
             <strong>${cards.length}</strong>
           </div>
         </div>
-
-        <button
-          type="button"
-          id="finishUnknownReview"
-        >
-          전체 문제로 돌아가기
-        </button>
       </div>
     `;
 
@@ -223,15 +244,15 @@
 
     card.classList.remove("is-answer", "is-known");
 
-    document
-      .getElementById("finishUnknownReview")
-      .addEventListener("click", () => {
-        reviewUnknownOnly = false;
-        index = 0;
-        showingAnswer = false;
+    // 복습 완료 화면에서도 버튼을 Restart / Review로 변경
+    unknownCardMode = "restart";
+    knownCardMode = "review";
 
-        render();
-      });
+    unknownButton.textContent = "Restart";
+    knownButton.textContent = "Review";
+
+    // 아직 틀린 문제가 없으면 Review 비활성화
+    knownButton.disabled = unknownCount === 0;
   }
 
   function showCompleteMessage() {
@@ -250,66 +271,65 @@
       <div class="study-area completion">
         <h4>🎉 문제를 모두 풀었습니다!</h4>
 
-            <div class="stat-num">정답률 : ${accuracy}%</div>
-            <div class="stat-label">전체 문제 : ${cards.length}</div>
-            <div class="stat-label">맞은 문제 : ${knownCount}</div>
-            <div class="stat-label">틀린 문제 : ${unknownCount}</div>
-        
-          <div class="cta-row">
-          <button
-            type="button"
-            id="restartCards"
-            class="btn btn-ghost"
-          >
-            Restart
-          </button>
-
-          ${
-            unknownCount > 0
-              ? `
-                <button
-                  type="button"
-                  id="reviewUnknown"
-                  class="btn btn-ghost"
-                >
-                  Review
-                </button>
-              `
-              : ""
-          }
-        </div>
+        <div class="stat-num">정답률 : ${accuracy}%</div>
+        <div class="stat-label">전체 문제 : ${cards.length}</div>
+        <div class="stat-label">맞은 문제 : ${knownCount}</div>
+        <div class="stat-label">틀린 문제 : ${unknownCount}</div>
       </div>
     `;
 
     answerPanel.hidden = true;
+
     hint.textContent = "학습 완료";
+
     status.textContent = "상태: 전체 문제 완료";
+
     progress.textContent = `${cards.length} / ${cards.length}`;
+
     card.classList.remove("is-answer", "is-known");
 
-    document.getElementById("restartCards").addEventListener("click", () => {
-      reviewUnknownOnly = false;
-      answeredThisRound = new Set();
-      studyQueue = [];
-      studyQueueIndex = 0;
+    // 기존 Fail / Pass 버튼을 Restart / Review로 변경
+    unknownCardMode = "restart";
+    knownCardMode = "review";
 
-      index = 0;
-      showingAnswer = false;
+    unknownButton.textContent = "Restart";
+    knownButton.textContent = "Review";
 
-      render();
-    });
+    // 틀린 문제가 없으면 Review 비활성화
+    knownButton.disabled = unknownCount === 0;
+  }
 
-    const reviewButton = document.getElementById("reviewUnknown");
+  function restartCards() {
+    reviewUnknownOnly = false;
 
-    if (reviewButton) {
-      reviewButton.addEventListener("click", startUnknownReview);
-    }
+    answeredThisRound = new Set();
+
+    studyQueue = [];
+
+    studyQueueIndex = 0;
+
+    index = 0;
+
+    showingAnswer = false;
+
+    // Fail / Pass로 복구
+    unknownCardMode = "unknown";
+    knownCardMode = "known";
+
+    unknownButton.textContent = "Fail";
+    knownButton.textContent = "Pass";
+
+    unknownButton.disabled = false;
+    knownButton.disabled = false;
+
+    render();
   }
 
   function mark(state) {
     const current = currentCard();
 
     progressByCard[current.id] = state;
+
     answeredThisRound.add(current.id);
 
     save();
@@ -438,7 +458,18 @@
         index = cards.findIndex((card) => card.id === item.id);
 
         showingAnswer = false;
+
         catalog.hidden = true;
+
+        // Fail / Pass 버튼으로 복구
+        unknownCardMode = "unknown";
+        knownCardMode = "known";
+
+        unknownButton.textContent = "Fail";
+        knownButton.textContent = "Pass";
+
+        unknownButton.disabled = false;
+        knownButton.disabled = false;
 
         render();
 
@@ -454,16 +485,29 @@
 
   card.addEventListener("click", () => {
     showingAnswer = !showingAnswer;
+
     render();
   });
 
-  document
-    .getElementById("unknownCard")
-    .addEventListener("click", () => mark("unknown"));
+  // Fail 버튼
+  unknownButton.addEventListener("click", () => {
+    if (unknownCardMode === "restart") {
+      restartCards();
+      return;
+    }
 
-  document
-    .getElementById("knownCard")
-    .addEventListener("click", () => mark("known"));
+    mark("unknown");
+  });
+
+  // Pass 버튼
+  knownButton.addEventListener("click", () => {
+    if (knownCardMode === "review") {
+      startUnknownReview();
+      return;
+    }
+
+    mark("known");
+  });
 
   document.getElementById("closeCatalog").addEventListener("click", () => {
     catalog.hidden = true;
@@ -484,11 +528,18 @@
   document.addEventListener("keydown", (event) => {
     if (event.code === "Space") {
       event.preventDefault();
+
       card.click();
     } else if (event.key === "ArrowLeft") {
-      mark("unknown");
+      // 완료 화면에서는 키보드로 Fail 처리하지 않음
+      if (unknownCardMode === "unknown") {
+        mark("unknown");
+      }
     } else if (event.key === "ArrowRight") {
-      mark("known");
+      // 완료 화면에서는 키보드로 Pass 처리하지 않음
+      if (knownCardMode === "known") {
+        mark("known");
+      }
     }
   });
 
