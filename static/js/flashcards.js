@@ -65,7 +65,7 @@
 
   function showCompleteMessage() {
     question.innerHTML = `
-    <div class="flashcard-complete">
+    <div class="bnt btn-green">
       <h2>🎉 문제를 모두 풀었습니다!</h2>
       <p>모든 카드의 학습 상태를 기록했습니다.</p>
       <button type="button" id="restartCards">
