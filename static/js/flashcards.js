@@ -251,11 +251,11 @@
         <h2>🎉 문제를 모두 풀었습니다!</h2>
 
         <div class="stat">
-            <span>정답률 : ${accuracy}%</span>
+            <h2>정답률 : ${accuracy}%</h2>
 
-            <small>전체 문제 : ${cards.length}</small>
-            <small>맞은 문제 : ${knownCount}</small>
-            <small>틀린 문제 : ${unknownCount}</small>
+            <span class="tag">전체 문제 : ${cards.length}</span>
+            <span class="tag">맞은 문제 : ${knownCount}</span>
+            <span class="tag">틀린 문제 : ${unknownCount}</span>
           </div>
         </div>
 
