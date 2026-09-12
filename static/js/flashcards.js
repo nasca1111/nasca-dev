@@ -268,27 +268,29 @@
           </div>
         </div>
 
-        <button
-          type="button"
-          id="restartCards"
-          class="btn btn-ghost"
-        >
-          처음부터 다시 보기
-        </button>
+        <div class="study-filter">
+          <button
+            type="button"
+            id="restartCards"
+            class="btn btn-ghost"
+          >
+            처음부터 다시 보기
+          </button>
 
-        ${
-          unknownCount > 0
-            ? `
-              <button
-                type="button"
-                id="reviewUnknown"
-                class="btn btn-ghost"
-              >
-                틀린 문제 다시 풀기
-              </button>
-            `
-            : ""
-        }
+          ${
+            unknownCount > 0
+              ? `
+                <button
+                  type="button"
+                  id="reviewUnknown"
+                  class="btn btn-ghost"
+                >
+                  틀린 문제 다시 풀기
+                </button>
+              `
+              : ""
+          }
+          </div>
       </div>
     `;
 
