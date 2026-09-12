@@ -205,6 +205,7 @@
       </section>
 
 
+      {% if is_admin %}
       <section id="scope">
         <div class="sec-head">
           <span class="sec-num">§2</span
@@ -219,16 +220,6 @@
             data-card-ids="{{ deck.cards|map(attribute='id')|join(',') }}"
             data-search-text="{{ (flashcard_deck_name(deck) ~ ' ' ~ deck.source_filename)|lower }}"
           >
-            {% if is_admin %}
-            <label class="deck-select">
-              <input
-                type="checkbox"
-                name="deck_ids"
-                value="{{ deck.id }}"
-                class="deck-select-input"
-              />
-            </label>
-            {% endif %}
 
             <a
               class="deck-title-link"
@@ -256,7 +247,9 @@
 
           {% endfor %}
         </section>
+      {% endif %}
       </section>
+      
 
       <section id="findings">
         <div class="sec-head">

@@ -70,8 +70,7 @@
             선택
           </button>
         </div>
-        {% endif %}
-
+        {% endif %} {% if is_admin %}
         <section class="flashcard-deck-list">
           {% for deck in decks %}
 
@@ -81,7 +80,6 @@
             data-card-ids="{{ deck.cards|map(attribute='id')|join(',') }}"
             data-search-text="{{ (flashcard_deck_name(deck) ~ ' ' ~ deck.source_filename)|lower }}"
           >
-            {% if is_admin %}
             <label class="deck-select">
               <input
                 type="checkbox"
@@ -90,8 +88,6 @@
                 class="deck-select-input"
               />
             </label>
-            {% endif %}
-
             <a
               class="deck-title-link"
               href="{{ url_for('study_flashcards', deck_id=deck.id) }}"
@@ -118,6 +114,7 @@
 
           {% endfor %}
         </section>
+        {% endif %}
       </form>
       {% endif %}
     </main>
