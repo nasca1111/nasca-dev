@@ -248,14 +248,13 @@
 
     question.innerHTML = `
       <div class="study-area">
-        <h2>🎉 문제를 모두 풀었습니다!</h2>
+        <h3>🎉 문제를 모두 풀었습니다!</h3>
 
         <div class="stat">
-            <h2>정답률 : ${accuracy}%</h2>
-
-            <span class="tag">전체 문제 : ${cards.length}</span>
-            <span class="tag">맞은 문제 : ${knownCount}</span>
-            <span class="tag">틀린 문제 : ${unknownCount}</span>
+            <div class="stat-num">정답률 : ${accuracy}%</div>
+            <div class="stat-label">전체 문제 : ${cards.length}</div>
+            <div class="stat-label">맞은 문제 : ${knownCount}</div>
+            <div class="stat-label">틀린 문제 : ${unknownCount}</div>
           </div>
         </div>
 
