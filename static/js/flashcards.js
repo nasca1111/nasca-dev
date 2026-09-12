@@ -243,19 +243,19 @@
       (item) => cardStatus(item) === "unknown",
     ).length;
 
+    const accuracy =
+      cards.length > 0 ? Math.round((knownCount / cards.length) * 100) : 0;
+
     question.innerHTML = `
       <div class="study-area">
         <h2>🎉 문제를 모두 풀었습니다!</h2>
 
         <div class="stat">
-          <div>
-            <small>맞은 문제 : ${knownCount}</small>
-          </div>
-          <div>
-            <small>틀린 문제 : ${unknownCount}</small>
-          </div>
-          <div>
+            <span>정답률 : ${accuracy}%</span>
+
             <small>전체 문제 : ${cards.length}</small>
+            <small>맞은 문제 : ${knownCount}</small>
+            <small>틀린 문제 : ${unknownCount}</small>
           </div>
         </div>
 
