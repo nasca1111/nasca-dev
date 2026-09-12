@@ -502,8 +502,8 @@ def home():
 
 @app.route("/flashcards")
 def flashcards():
-    if not session.get("is_admin"):
-        abort(403)
+    if not is_admin():
+        return redirect(url_for("login", next=request.path))
     decks = FlashcardDeck.query.order_by(FlashcardDeck.created_at.desc()).all()
     return render_template("flashcards.html", decks=decks)
 
