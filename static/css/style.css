@@ -2618,12 +2618,11 @@ footer p {
   }
 
   .flashcard-page #cardCatalog {
-    grid-column: 2;
-    grid-row: 1 / span 4;
-    width: 100%;
-    margin: 0;
-    position: sticky;
+    position: fixed;
     top: 24px;
-    align-self: start;
+    right: max(24px, calc((100vw - 1100px) / 2));
+    width: 320px;
+    margin: 0;
+    z-index: 20;
   }
 }
