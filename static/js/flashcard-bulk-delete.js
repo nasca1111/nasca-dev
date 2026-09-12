@@ -17,7 +17,11 @@
 
   cancelBtn.addEventListener("click", () => {
     checkboxes().forEach((cb) => {
-      cb.closest(".deck-select").style.display = "block";
+      if (cb.closest(".deck-select").style.display === "none") {
+        cb.closest(".deck-select").style.display = "block";
+      } else {
+        cb.closest(".deck-select").style.display = "none";
+      }
     });
     refresh();
   });
@@ -32,5 +36,6 @@
     ) {
       event.preventDefault();
     }
+    cb.closest(".deck-select").style.display = "none";
   });
 })();
