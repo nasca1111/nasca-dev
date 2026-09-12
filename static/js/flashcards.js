@@ -20,6 +20,8 @@
     index = 0,
     showingAnswer = false,
     catalogFilter = "all";
+  reviewUnknownOnly = false;
+
   const card = document.getElementById("studyCard"),
     question = document.getElementById("cardContent");
   const answer = document.getElementById("answerContent"),
@@ -57,12 +59,84 @@
     card.classList.toggle("is-answer", showingAnswer);
     card.classList.toggle("is-known", state === "known");
   }
+
   function moveToNext() {
-    index = (index + 1) % cards.length;
+    if (reviewUnknownOnly) {
+      const unknownCards = cards.filter(
+        (item) => cardStatus(item) === "unknown",
+      );
+
+      const currentUnknownIndex = unknownCards.findIndex(
+        (item) => item.id === currentCard().id,
+      );
+
+      if (currentUnknownIndex === unknownCards.length - 1) {
+        showUnknownCompleteMessage();
+        return;
+      }
+
+      const nextCard = unknownCards[currentUnknownIndex + 1];
+      index = cards.findIndex((item) => item.id === nextCard.id);
+    } else {
+      index = (index + 1) % cards.length;
+    }
+
     showingAnswer = false;
     render();
   }
 
+  function startUnknownReview() {
+    const unknownCards = cards.filter((item) => cardStatus(item) === "unknown");
+
+    if (!unknownCards.length) {
+      alert("틀린 문제가 없습니다!");
+      return;
+    }
+
+    reviewUnknownOnly = true;
+    index = cards.findIndex((item) => item.id === unknownCards[0].id);
+    showingAnswer = false;
+
+    render();
+  }
+
+  function showUnknownCompleteMessage() {
+    const remainingUnknown = cards.filter(
+      (item) => cardStatus(item) === "unknown",
+    ).length;
+
+    question.innerHTML = `
+    <div class="flashcard-complete">
+      <h2>🎉 틀린 문제를 모두 다시 봤습니다!</h2>
+      <p>아직 모르는 문제: ${remainingUnknown}개</p>
+
+      <button type="button" id="finishUnknownReview">
+        전체 문제로 돌아가기
+      </button>
+      
+      <button type="button" id="reviewUnknown" class="btn btn-primary">
+        틀린 문제 다시 풀기
+      </button>
+    </div>
+  `;
+
+    answerPanel.hidden = true;
+    hint.textContent = "복습 완료";
+    status.textContent = "상태: 틀린 문제 복습 완료";
+
+    document
+      .getElementById("reviewUnknown")
+      .addEventListener("click", startUnknownReview);
+
+    document
+      .getElementById("finishUnknownReview")
+      .addEventListener("click", () => {
+        reviewUnknownOnly = false;
+        index = 0;
+        showingAnswer = false;
+        render();
+      });
+  }
   function showCompleteMessage() {
     const knownCount = cards.filter(
       (item) => cardStatus(item) === "known",
