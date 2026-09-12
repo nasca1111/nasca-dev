@@ -255,10 +255,8 @@
             <div class="stat-label">전체 문제 : ${cards.length}</div>
             <div class="stat-label">맞은 문제 : ${knownCount}</div>
             <div class="stat-label">틀린 문제 : ${unknownCount}</div>
-          </div>
         </div>
-
-        <div class="stat">
+        
         <div class="study-filter">
           <button
             type="button"
@@ -281,8 +279,8 @@
               `
               : ""
           }
-          </div></div>
-        
+          </div>
+        </div>
       </div>
     `;
 
