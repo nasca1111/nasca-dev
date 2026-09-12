@@ -257,13 +257,13 @@
             <div class="stat-label">틀린 문제 : ${unknownCount}</div>
         </div>
         
-        <div class="study-filter">
+        <div class="cta-row">
           <button
             type="button"
             id="restartCards"
             class="btn btn-ghost"
           >
-            처음부터 다시 보기
+            Restart
           </button>
 
           ${
@@ -274,7 +274,7 @@
                   id="reviewUnknown"
                   class="btn btn-ghost"
                 >
-                  틀린 문제 다시 풀기
+                  Review
                 </button>
               `
               : ""
