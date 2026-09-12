@@ -247,11 +247,7 @@
       <div class="study-area">
         <h2>🎉 문제를 모두 풀었습니다!</h2>
 
-        <p>
-          모든 카드의 학습 상태를 기록했습니다.
-        </p>
-
-        <div class="completion-stats">
+        <div class="stat">
           <div>
             <small>맞은 문제 : ${knownCount}</small>
           </div>
