@@ -253,18 +253,13 @@
 
         <div class="completion-stats">
           <div>
-            <small>맞은 문제</small>
-            <strong>${knownCount}</strong>
+            <small>맞은 문제 : ${knownCount}</small>
           </div>
-
           <div>
-            <small>틀린 문제</small>
-            <strong>${unknownCount}</strong>
+            <small>틀린 문제 : ${unknownCount}</small>
           </div>
-
           <div>
-            <small>전체 문제</small>
-            <strong>${cards.length}</strong>
+            <small>전체 문제 : ${cards.length}</small>
           </div>
         </div>
 
