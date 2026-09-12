@@ -205,12 +205,12 @@
       </section>
 
 
-      {% if is_admin %}
       <section id="scope">
         <div class="sec-head">
           <span class="sec-num">§2</span
-          ><span class="sec-title">Scope of Capability</span>
+          ><span class="sec-title">Flash cards</span>
         </div>
+        {% if is_admin %}
         <section class="flashcard-deck-list">
           {% for deck in decks %}
 
@@ -247,6 +247,8 @@
 
           {% endfor %}
         </section>
+      {% elseif %}
+        <p class="learning-empty-state">Only available to administrators.</p>
       {% endif %}
       </section>
       
