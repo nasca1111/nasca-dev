@@ -56,7 +56,6 @@
             {% else %}
             <a class="btn btn-ghost" href="{{ url_for('login', next=request.path) }}">Login</a>
             {% endif %}
-            <a class="btn btn-primary" href="{{ url_for('flashcards') }}">Study Flashcards →</a>
             <div class="hero-posts">
               <div class="hero-posts-head">
                 <span>PERSONAL LOG</span>
@@ -211,14 +210,52 @@
           <span class="sec-num">§2</span
           ><span class="sec-title">Scope of Capability</span>
         </div>
-        <div class="cap-grid">
-          <div class="cap-card reveal">
-            <div class="cap-card-head">
-              <span class="cap-title">scope context space</span
-              ><span class="cap-idx">01</span>
-            </div>
-          </div>
-        </div>
+        <section class="flashcard-deck-list">
+          {% for deck in decks %}
+
+          <article
+            class="flashcard-deck"
+            data-deck-id="{{ deck.id }}"
+            data-card-ids="{{ deck.cards|map(attribute='id')|join(',') }}"
+            data-search-text="{{ (flashcard_deck_name(deck) ~ ' ' ~ deck.source_filename)|lower }}"
+          >
+            {% if is_admin %}
+            <label class="deck-select">
+              <input
+                type="checkbox"
+                name="deck_ids"
+                value="{{ deck.id }}"
+                class="deck-select-input"
+              />
+            </label>
+            {% endif %}
+
+            <a
+              class="deck-title-link"
+              href="{{ url_for('study_flashcards', deck_id=deck.id) }}"
+            >
+              <span class="sec-num"> {{ deck.cards|length }} CARDS </span>
+
+              <h2>
+                {{ flashcard_deck_name(deck)[:6] }}{% if
+                flashcard_deck_name(deck)|length > 6 %}…{% endif %}
+              </h2>
+
+              <span class="deck-progress">
+                <span class="deck-progress-known">0</span>/<span
+                  class="deck-progress-total"
+                  >{{ deck.cards|length }}</span
+                >
+              </span>
+            </a>
+          </article>
+
+          {% else %}
+
+          <p class="learning-empty-state">No decks imported yet.</p>
+
+          {% endfor %}
+        </section>
       </section>
 
       <section id="findings">
@@ -395,5 +432,7 @@
     <script src="/static/js/hoverFuc.js"></script>
     <script src="/static/js/syslog.js"></script>
     <script src="/static/js/learningTabs.js"></script>
+    <script src="/static/js/flashcard-progress.js"></script>
+    <script src="/static/js/flashcard-bulk-delete.js"></script>
   </body>
 </html>
