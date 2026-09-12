@@ -2585,6 +2585,10 @@ footer p {
 }
 
 @media (min-width: 701px) {
+  .card-picker {
+    max-height: calc(10 * 44px + 9 * 6px);
+  }
+
   .flashcard-page .study-area {
     display: grid;
     grid-template-columns: minmax(0, 760px) minmax(260px, 320px);
