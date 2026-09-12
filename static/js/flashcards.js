@@ -247,10 +247,9 @@
       cards.length > 0 ? Math.round((knownCount / cards.length) * 100) : 0;
 
     question.innerHTML = `
-      <div class="study-area">
+      <div class="study-area completion">
         <h4>🎉 문제를 모두 풀었습니다!</h4>
 
-        <div class="stat">
             <div class="stat-num">정답률 : ${accuracy}%</div>
             <div class="stat-label">전체 문제 : ${cards.length}</div>
             <div class="stat-label">맞은 문제 : ${knownCount}</div>
@@ -278,7 +277,6 @@
               `
               : ""
           }
-          </div>
         </div>
       </div>
     `;
