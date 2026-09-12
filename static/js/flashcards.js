@@ -248,7 +248,7 @@
 
     question.innerHTML = `
       <div class="study-area">
-        <h3>🎉 문제를 모두 풀었습니다!</h3>
+        <h4>🎉 문제를 모두 풀었습니다!</h4>
 
         <div class="stat">
             <div class="stat-num">정답률 : ${accuracy}%</div>
@@ -256,7 +256,9 @@
             <div class="stat-label">맞은 문제 : ${knownCount}</div>
             <div class="stat-label">틀린 문제 : ${unknownCount}</div>
         </div>
-           <button
+        
+        <div class="study-filter">
+          <button
             type="button"
             id="restartCards"
             class="btn btn-ghost"
@@ -277,6 +279,7 @@
               `
               : ""
           }
+          </div>
         </div>
       </div>
     `;
