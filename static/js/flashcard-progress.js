@@ -10,7 +10,9 @@
       /* Empty or invalid local progress. */
     }
     const ids = deck.dataset.cardIds ? deck.dataset.cardIds.split(",") : [];
-    const knownCount = ids.filter((id) => known[id]).length;
+    const knownCount = ids.filter(
+      (id) => known[id] === "known" || known[id] === true,
+    ).length;
     deck.querySelector(".deck-progress-known").textContent = knownCount;
     deck.querySelector(".deck-progress-total").textContent = ids.length;
   });

@@ -242,6 +242,7 @@
         <button
           type="button"
           id="restartCards"
+          class="btn btn-green"
         >
           처음부터 다시 보기
         </button>
@@ -252,7 +253,7 @@
               <button
                 type="button"
                 id="reviewUnknown"
-                class="btn btn-primary"
+                class="btn btn-green"
               >
                 틀린 문제 다시 풀기
               </button>
@@ -263,13 +264,9 @@
     `;
 
     answerPanel.hidden = true;
-
     hint.textContent = "학습 완료";
-
     status.textContent = "상태: 전체 문제 완료";
-
     progress.textContent = `${cards.length} / ${cards.length}`;
-
     card.classList.remove("is-answer", "is-known");
 
     document.getElementById("restartCards").addEventListener("click", () => {
