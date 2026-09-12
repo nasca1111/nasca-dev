@@ -244,7 +244,7 @@
     ).length;
 
     question.innerHTML = `
-      <div class="flashcard-complete">
+      <div class="learning-empty-state">
         <h2>🎉 문제를 모두 풀었습니다!</h2>
 
         <p>
