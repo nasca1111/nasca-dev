@@ -62,9 +62,41 @@
     showingAnswer = false;
     render();
   }
+
+  function showCompleteMessage() {
+    question.innerHTML = `
+    <div class="flashcard-complete">
+      <h2>🎉 문제를 모두 풀었습니다!</h2>
+      <p>모든 카드의 학습 상태를 기록했습니다.</p>
+      <button type="button" id="restartCards">
+        처음부터 다시 보기
+      </button>
+    </div>
+  `;
+
+    answerPanel.hidden = true;
+    hint.textContent = "학습 완료";
+    status.textContent = "상태: 전체 문제 완료";
+    card.classList.remove("is-answer", "is-known");
+
+    document.getElementById("restartCards").addEventListener("click", () => {
+      index = 0;
+      showingAnswer = false;
+      render();
+    });
+  }
+
   function mark(state) {
     progressByCard[currentCard().id] = state;
     save();
+
+    const allDone = cards.every((item) => cardStatus(item) !== "unanswered");
+
+    if (allDone) {
+      showCompleteMessage();
+      return;
+    }
+
     moveToNext();
   }
   function catalogCards() {
