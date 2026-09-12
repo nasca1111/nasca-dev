@@ -225,25 +225,13 @@
     ).length;
 
     question.innerHTML = `
-      <div class="flashcard-complete">
-        <h2>🎉 틀린 문제 복습 완료!</h2>
+      <div class="study-area completion">
+        <h4>🎉 문제를 모두 풀었습니다!</h4>
 
-        <div class="completion-stats">
-          <div>
-            <span>맞은 문제</span>
-            <strong>${knownCount}</strong>
-          </div>
-
-          <div>
-            <span>아직 틀린 문제</span>
-            <strong>${unknownCount}</strong>
-          </div>
-
-          <div>
-            <span>전체 문제</span>
-            <strong>${cards.length}</strong>
-          </div>
-        </div>
+        <div class="stat-num">정답률 : ${accuracy}%</div>
+        <div class="stat-label">전체 문제 : ${cards.length}</div>
+        <div class="stat-label">맞은 문제 : ${knownCount}</div>
+        <div class="stat-label">틀린 문제 : ${unknownCount}</div>
       </div>
     `;
 
