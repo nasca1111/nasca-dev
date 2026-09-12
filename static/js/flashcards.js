@@ -25,6 +25,8 @@
   let showingAnswer = false;
   let catalogFilter = "all";
   let reviewUnknownOnly = false;
+  let studyQueue = [];
+  let studyQueueIndex = 0;
   let answeredThisRound = new Set();
 
   const card = document.getElementById("studyCard");
@@ -93,38 +95,57 @@
   }
 
   function moveToNext() {
-    // 틀린 문제 다시 풀기 모드
-    if (reviewUnknownOnly) {
-      const unknownCards = cards.filter(
-        (item) => cardStatus(item) === "unknown",
-      );
+    // 목록에서 시작한 학습 모드
+    if (studyQueue.length > 0) {
+      studyQueueIndex++;
 
-      // 남은 틀린 문제가 없으면 복습 완료
-      if (unknownCards.length === 0) {
-        showUnknownCompleteMessage();
-        return;
+      // 아직 안 푼 다음 문제가 있으면 이동
+      while (studyQueueIndex < studyQueue.length) {
+        const nextCard = studyQueue[studyQueueIndex];
+
+        if (!answeredThisRound.has(nextCard.id)) {
+          index = cards.findIndex((item) => item.id === nextCard.id);
+
+          showingAnswer = false;
+          render();
+          return;
+        }
+
+        studyQueueIndex++;
       }
 
-      const currentUnknownIndex = unknownCards.findIndex(
-        (item) => item.id === currentCard().id,
-      );
+      // 여기까지 왔다는 건 선택한 위치부터 끝까지 다 푼 것
+      // 이제 배열 앞쪽으로 돌아가서 아직 안 푼 문제를 찾는다.
+      studyQueueIndex = 0;
 
-      // 현재 카드가 마지막 틀린 문제였다면
-      if (currentUnknownIndex === unknownCards.length - 1) {
-        showUnknownCompleteMessage();
-        return;
+      while (studyQueueIndex < studyQueue.length) {
+        const nextCard = studyQueue[studyQueueIndex];
+
+        if (!answeredThisRound.has(nextCard.id)) {
+          index = cards.findIndex((item) => item.id === nextCard.id);
+
+          showingAnswer = false;
+          render();
+          return;
+        }
+
+        studyQueueIndex++;
       }
 
-      const nextCard = unknownCards[currentUnknownIndex + 1];
+      // 모든 문제가 끝남
+      if (reviewUnknownOnly) {
+        showUnknownCompleteMessage();
+      } else {
+        showCompleteMessage();
+      }
 
-      index = cards.findIndex((item) => item.id === nextCard.id);
-    } else {
-      // 일반 모드
-      index = (index + 1) % cards.length;
+      return;
     }
 
-    showingAnswer = false;
+    // 일반적인 전체 문제 학습
+    index = (index + 1) % cards.length;
 
+    showingAnswer = false;
     render();
   }
 
@@ -138,10 +159,18 @@
 
     reviewUnknownOnly = true;
 
-    index = cards.findIndex((item) => item.id === unknownCards[0].id);
+    // 이번 복습에서 풀 문제 목록
+    studyQueue = unknownCards.slice();
+
+    // 이번 복습 회차 초기화
+    answeredThisRound = new Set();
+
+    // 첫 번째 모르는 문제부터 시작
+    studyQueueIndex = 0;
+
+    index = cards.findIndex((item) => item.id === studyQueue[0].id);
 
     showingAnswer = false;
-
     render();
   }
 
@@ -272,6 +301,9 @@
     document.getElementById("restartCards").addEventListener("click", () => {
       reviewUnknownOnly = false;
       answeredThisRound = new Set();
+      studyQueue = [];
+      studyQueueIndex = 0;
+
       index = 0;
       showingAnswer = false;
 
@@ -293,18 +325,38 @@
 
     save();
 
-    // 틀린 문제 복습 모드
-    if (reviewUnknownOnly) {
-      moveToNext();
-      return;
+    // 모르는 문제 목록에서 학습 중인 경우
+    if (reviewUnknownOnly && studyQueue.length > 0) {
+      const allUnknownDone = studyQueue.every((item) =>
+        answeredThisRound.has(item.id),
+      );
+
+      if (allUnknownDone) {
+        showUnknownCompleteMessage();
+        return;
+      }
     }
 
-    // 이번 회차에서 모든 카드를 풀었는지 확인
-    const allDone = cards.every((item) => answeredThisRound.has(item.id));
+    // 전체 문제 목록에서 학습 중인 경우
+    else if (studyQueue.length > 0) {
+      const allDone = studyQueue.every((item) =>
+        answeredThisRound.has(item.id),
+      );
 
-    if (allDone) {
-      showCompleteMessage();
-      return;
+      if (allDone) {
+        showCompleteMessage();
+        return;
+      }
+    }
+
+    // 일반 학습 모드
+    else {
+      const allDone = cards.every((item) => answeredThisRound.has(item.id));
+
+      if (allDone) {
+        showCompleteMessage();
+        return;
+      }
     }
 
     moveToNext();
@@ -364,10 +416,39 @@
       `;
 
       button.addEventListener("click", () => {
+        // 전체 문제 목록
+        if (catalogFilter === "all") {
+          studyQueue = cards.slice();
+          reviewUnknownOnly = false;
+        }
+
+        // 모르는 문제 목록
+        else if (catalogFilter === "unknown") {
+          studyQueue = cards.filter((card) => cardStatus(card) === "unknown");
+
+          reviewUnknownOnly = true;
+        }
+
+        // 선택한 문제의 위치
+        const selectedIndex = studyQueue.findIndex(
+          (card) => card.id === item.id,
+        );
+
+        if (selectedIndex === -1) {
+          return;
+        }
+
+        // 선택한 문제부터 시작
+        studyQueue = [
+          ...studyQueue.slice(selectedIndex),
+          ...studyQueue.slice(0, selectedIndex),
+        ];
+
+        studyQueueIndex = 0;
+
         index = cards.findIndex((card) => card.id === item.id);
 
         showingAnswer = false;
-
         catalog.hidden = true;
 
         render();
