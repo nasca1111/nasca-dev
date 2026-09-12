@@ -462,13 +462,19 @@ def home():
         user_agent=request.headers.get("User-Agent")
     )
 
-
-
     db.session.add(visitor)
     db.session.commit()
 
     posts = Post.query.order_by(Post.created_at.desc()).all()
-    learning_categories = LearningCategory.query.order_by(LearningCategory.name).all()
+
+    learning_categories = LearningCategory.query.order_by(
+        LearningCategory.name
+    ).all()
+
+    decks = FlashcardDeck.query.order_by(
+        FlashcardDeck.created_at.desc()
+    ).all()
+
     recent_visitors = (
         Visitor.query
         .filter(Visitor.ip.notlike("%:%"))
@@ -478,19 +484,21 @@ def home():
     )
 
     total_visitors = Visitor.query.count()
+
     today = datetime.now().date()
+
     today_visitors = Visitor.query.filter(
-    db.func.date(Visitor.visited_at) == today
+        db.func.date(Visitor.visited_at) == today
     ).count()
 
     return render_template(
         "index.html",
         posts=posts,
         learning_categories=learning_categories,
+        decks=decks,
         today_visitors=today_visitors,
         total_visitors=total_visitors
     )
-
 
 @app.route("/flashcards")
 def flashcards():
