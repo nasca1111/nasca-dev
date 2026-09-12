@@ -25,6 +25,7 @@
   let showingAnswer = false;
   let catalogFilter = "all";
   let reviewUnknownOnly = false;
+  let answeredThisRound = new Set();
 
   const card = document.getElementById("studyCard");
   const question = document.getElementById("cardContent");
@@ -273,6 +274,7 @@
 
     document.getElementById("restartCards").addEventListener("click", () => {
       reviewUnknownOnly = false;
+      answeredThisRound = new Set();
       index = 0;
       showingAnswer = false;
 
@@ -287,7 +289,10 @@
   }
 
   function mark(state) {
-    progressByCard[currentCard().id] = state;
+    const current = currentCard();
+
+    progressByCard[current.id] = state;
+    answeredThisRound.add(current.id);
 
     save();
 
@@ -297,8 +302,8 @@
       return;
     }
 
-    // 전체 문제를 한 번씩 풀었는지 확인
-    const allDone = cards.every((item) => cardStatus(item) !== "unanswered");
+    // 이번 회차에서 모든 카드를 풀었는지 확인
+    const allDone = cards.every((item) => answeredThisRound.has(item.id));
 
     if (allDone) {
       showCompleteMessage();
