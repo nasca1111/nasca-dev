@@ -2566,3 +2566,19 @@ footer p {
 .flashcard-deck {
   position: relative; /* 체크박스 절대 위치 기준 */
 }
+
+.completion {
+  text-align: center;
+}
+
+.completion .stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.completion .cta-row {
+  justify-content: center;
+  margin-top: 20px;
+}
