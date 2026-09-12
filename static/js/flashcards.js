@@ -28,6 +28,7 @@
   let studyQueue = [];
   let studyQueueIndex = 0;
   let answeredThisRound = new Set();
+  let isCompleteScreen = false;
 
   // Fail / Pass 버튼의 현재 역할
   let unknownCardMode = "unknown";
@@ -198,7 +199,7 @@
 
     unknownButton.disabled = false;
     knownButton.disabled = false;
-
+    isCompleteScreen = false;
     render();
   }
 
@@ -253,6 +254,7 @@
 
     // 아직 틀린 문제가 없으면 Review 비활성화
     knownButton.disabled = unknownCount === 0;
+    isCompleteScreen = true;
   }
 
   function showCompleteMessage() {
@@ -295,8 +297,12 @@
     unknownButton.textContent = "Restart";
     knownButton.textContent = "Review";
 
+    unknownButton.classList.add("btn", "btn-ghost");
+    knownButton.classList.add("btn", "btn-ghost");
+
     // 틀린 문제가 없으면 Review 비활성화
     knownButton.disabled = unknownCount === 0;
+    isCompleteScreen = true;
   }
 
   function restartCards() {
@@ -319,9 +325,12 @@
     unknownButton.textContent = "Fail";
     knownButton.textContent = "Pass";
 
+    unknownButton.classList.remove("btn", "btn-ghost");
+    knownButton.classList.remove("btn", "btn-ghost");
+
     unknownButton.disabled = false;
     knownButton.disabled = false;
-
+    isCompleteScreen = false;
     render();
   }
 
@@ -484,8 +493,11 @@
   }
 
   card.addEventListener("click", () => {
-    showingAnswer = !showingAnswer;
+    if (isCompleteScreen) {
+      return;
+    }
 
+    showingAnswer = !showingAnswer;
     render();
   });
 
