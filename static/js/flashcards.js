@@ -256,9 +256,7 @@
             <div class="stat-label">맞은 문제 : ${knownCount}</div>
             <div class="stat-label">틀린 문제 : ${unknownCount}</div>
         </div>
-        
-        <div class="study-filter">
-          <button
+           <button
             type="button"
             id="restartCards"
             class="btn btn-ghost"
@@ -279,7 +277,6 @@
               `
               : ""
           }
-          </div>
         </div>
       </div>
     `;
