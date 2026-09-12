@@ -259,6 +259,7 @@
           </div>
         </div>
 
+        <div class="stat">
         <div class="study-filter">
           <button
             type="button"
@@ -281,7 +282,8 @@
               `
               : ""
           }
-          </div>
+          </div></div>
+        
       </div>
     `;
 
